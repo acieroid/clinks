@@ -15,15 +15,26 @@
                      (str (url link)))
                  :br)))))
 
+(defpage new-link
+  (:html
+   (:body
+    (if (and (parameter "url"))
+        (htm
+         (add-link (parameter "url") (parameter "tags"))
+         (:p "Link added"))
+        (htm
+         (:form :action "new-link" :method "post"
+                (:p "URL:" (:input :type "text" :name "url"))
+                (:p "tags:" (:input :type "text" :name "tags"))
+                (:p (:input :type "submit" :value "add"))))))))
+
 (defun all-links ()
-  ;; select return a list of "list of length 1", so we transform it
-  ;; into a simple list
-  (mapcar #'car (select 'link)))
+  (select 'link :flatp t))
 
 (defun get-max-id ()
   (reduce (lambda (last x)
-            (max last (first x)))
-          (select [id] :from [link])
+            (max last x))
+          (select [id] :from [link] :flatp t)
           :initial-value 0))
 
 (let (id)
@@ -32,7 +43,7 @@
       (setf id (get-max-id)))
     (incf id)))
 
-(defun new-link (url tags)
+(defun add-link (url tags)
   (let ((link (make-instance 'link :id (new-id)
                              :url url :tags tags)))
-    (update-records-from-instance link)))
+    (clsql:update-records-from-instance link)))

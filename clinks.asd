@@ -5,5 +5,6 @@
   :depends-on ("hunchentoot" "clsql" "clsql-sqlite3" "cxml-rpc" "cl-who")
   :components ((:file "package")
                (:file "clinks")
+               (:file "pages")
                (:file "links")))
 

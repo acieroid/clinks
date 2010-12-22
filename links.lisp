@@ -8,29 +8,27 @@
    (tags :type string
          :accessor tags :initarg :tags)))
 
-(defpage links
-  (:html
-   (:body (dolist (link (all-links))
-            (htm (:a :href (url link)
-                     (str (url link)))
-                 :br)))))
+(defpage links "All links"
+  (dolist (link (all-links))
+    (htm (:a :href (url link)
+             (str (url link)))
+         :br)))
 
-(defpage new-link
-  (:html
-   (:body
-    (if (and (parameter "url"))
-        (htm
-         (add-link (parameter "url") (parameter "tags"))
-         (:p "Link added"))
-        (htm
-         (:form :action "new-link" :method "post"
-                (:p "URL:" (:input :type "text" :name "url"))
-                (:p "tags:" (:input :type "text" :name "tags"))
-                (:p (:input :type "submit" :value "add"))))))))
+(defpage new-link "New link"
+  (if (and (parameter "url"))
+      (htm
+       (add-link (parameter "url") (parameter "tags"))
+       (:p "Link added"))
+      (htm
+       (:form :action "new-link" :method "post"
+              (:p "URL:" (:input :type "text" :name "url"))
+              (:p "tags:" (:input :type "text" :name "tags"))
+              (:p (:input :type "submit" :value "add"))))))
 
 (defun all-links ()
   (select 'link :flatp t))
 
+;; TODO: locally enable reader syntax
 (defun get-max-id ()
   (reduce (lambda (last x)
             (max last x))
@@ -46,4 +44,4 @@
 (defun add-link (url tags)
   (let ((link (make-instance 'link :id (new-id)
                              :url url :tags tags)))
-    (clsql:update-records-from-instance link)))
+    (update-records-from-instance link)))

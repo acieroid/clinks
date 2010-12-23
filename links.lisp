@@ -8,11 +8,17 @@
    (tags :type string
          :accessor tags :initarg :tags)))
 
+(defmethod print-html ((link link))
+  (with-html-output-to-string (stream)
+      (htm (:a :href (url link)
+               (str (url link)))
+           :br)))
+
 (defpage links "All links"
-  (dolist (link (all-links))
-    (htm (:a :href (url link)
-             (str (url link)))
-         :br)))
+  (:ul
+   (mapcar (lambda (x)
+             (htm (:li (str (print-html x)))))
+           (all-links))))
 
 (defpage new-link "New link"
   (if (and (parameter "url"))

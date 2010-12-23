@@ -26,14 +26,15 @@
               (:p (:input :type "submit" :value "add"))))))
 
 (defun all-links ()
-  (select 'link :flatp t))
+  (select 'link :flatp t :refresh t))
 
-;; TODO: locally enable reader syntax
+#.(locally-enable-sql-reader-syntax)
 (defun get-max-id ()
   (reduce (lambda (last x)
             (max last x))
           (select [id] :from [link] :flatp t)
           :initial-value 0))
+#.(restore-sql-reader-syntax-state)
 
 (let (id)
   (defun new-id ()

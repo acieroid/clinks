@@ -1,5 +1,6 @@
 (in-package #:clinks)
 
+(defparameter *css-file* "design.css")
 ;; For debug only
 (setf *show-lisp-errors-p* t)
 
@@ -21,5 +22,6 @@
 (defun start (&optional (port 8000) (db-specs '("clinks.db")) (db-type :sqlite3))
   (connect-db db-specs db-type)
   (create-tables 'link)
+  (push (create-static-file-dispatcher-and-handler "/design.css" *css-file*) *dispatch-table*)
   (hunchentoot:start
    (make-instance 'acceptor :port port)))

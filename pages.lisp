@@ -7,7 +7,7 @@
 
 (defun print-menu ()
   (with-html-output-to-string (stream)
-    (:div :id "menu"
+    (:div :class "menu"
           (flet ((print-link (element)
                    (let ((link (first element))
                          (name (second element)))
@@ -35,6 +35,7 @@
        (:link :type "text/css" :rel "stylesheet" :href "design.css")
        (:title ,title))
       (:body
+       (:h1 ,title)
        (str (print-menu))
        ,@body))))
 

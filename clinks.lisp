@@ -21,7 +21,7 @@
 
 (defun start (&optional (port 8000) (db-specs '("clinks.db")) (db-type :sqlite3))
   (connect-db db-specs db-type)
-  (create-tables 'link)
+  (create-tables 'user 'link)
   (push (create-static-file-dispatcher-and-handler "/design.css" *css-file*) *dispatch-table*)
   (hunchentoot:start
    (make-instance 'acceptor :port port)))

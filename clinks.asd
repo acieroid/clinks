@@ -2,9 +2,10 @@
 
 (asdf:defsystem #:clinks
   :serial t
-  :depends-on ("hunchentoot" "clsql" "clsql-sqlite3" "cxml-rpc" "cl-who")
+  :depends-on ("hunchentoot" "clsql" "clsql-sqlite3" "cxml-rpc" "cl-who" "ironclad")
   :components ((:file "package")
                (:file "clinks")
                (:file "pages")
-               (:file "links")))
+               (:file "links")
+               (:file "users")))
 

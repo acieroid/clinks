@@ -1,7 +1,7 @@
 (in-package :clinks)
 
 (def-view-class link ()
-  ((id :type integer :db-kind :key
+  ((id :type integer :db-kind :key :initform nil
        :reader id :initarg :id)
    (url :type string
         :accessor url :initarg :url)
@@ -21,15 +21,15 @@
            (all-links))))
 
 (defpage new-link "New link"
-  (if (and (parameter "url"))
+  (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
        (add-link (parameter "url") (parameter "tags"))
        (:p "Link added"))
       (htm
        (:form :action "new-link" :method "post"
               (:p "URL:" (:input :type "text" :name "url"))
-              (:p "tags:" (:input :type "text" :name "tags"))
-              (:p (:input :type "submit" :value "add"))))))
+              (:p "Tags:" (:input :type "text" :name "tags"))
+              (:p (:input :type "submit" :value "Add"))))))
 
 (defun all-links ()
   (select 'link :flatp t :refresh t))
@@ -49,6 +49,6 @@
     (incf id)))
 
 (defun add-link (url tags)
-  (let ((link (make-instance 'link :id (new-id)
+  (let ((link (make-instance 'link
                              :url url :tags tags)))
     (update-records-from-instance link)))

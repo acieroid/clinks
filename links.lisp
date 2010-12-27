@@ -3,6 +3,10 @@
 (def-view-class link ()
   ((id :type integer :db-kind :key :initform nil
        :reader id :initarg :id)
+   (user-id :type integer
+            :initarg :user-id)
+   (user :db-kind :join :db-info (:join-class user :home-key user-id :foreign-key id :set nil)
+         :accessor user)
    (url :type string
         :accessor url :initarg :url)
    (tags :type string
@@ -10,9 +14,10 @@
 
 (defmethod print-html ((link link))
   (with-html-output-to-string (stream)
-      (htm (:a :href (url link)
-               (str (url link)))
-           :br)))
+    (:div :class "link"
+          (:a :href (url link)
+              (str (url link)))
+          :br)))
 
 (defpage links "All links"
   (:ul

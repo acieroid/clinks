@@ -34,20 +34,6 @@
 (defun all-links ()
   (select 'link :flatp t :refresh t))
 
-#.(locally-enable-sql-reader-syntax)
-(defun get-max-id ()
-  (reduce (lambda (last x)
-            (max last x))
-          (select [id] :from [link] :flatp t)
-          :initial-value 0))
-#.(restore-sql-reader-syntax-state)
-
-(let (id)
-  (defun new-id ()
-    (unless id
-      (setf id (get-max-id)))
-    (incf id)))
-
 (defun add-link (url tags)
   (let ((link (make-instance 'link
                              :url url :tags tags)))

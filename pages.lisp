@@ -3,7 +3,7 @@
 (defvar *pages* nil)
 (defvar *menu-elements*
   '((links "all")
-    (new-link "new")))
+    (new "new-link")))
 
 (defun print-menu ()
   (with-html-output-to-string (stream)
@@ -13,17 +13,24 @@
                          (name (second element)))
                      (htm (:a :href (format nil "/~(~a~)" link) (str name))))))
             (mapcar (lambda (el) (print-link el) (htm (str " - ")))
-                    (butlast *menu-elements*))
-            (print-link (car (last *menu-elements*)))))))
+                    *menu-elements*)
+            (let ((user (session-value :user)))
+              (if user
+                  (htm "Connected as " (str user)
+                       " " (print-link '(disconnect "(disconnect)")))
+                  (htm "Disconnected: "
+                       (print-link '(connect "Connect")) " - "
+                       (print-link '(register "Register")))))))))
 
 (defmacro def-blank-page (name &body body)
-  (let ((stream (gensym "stream")))
+  (let ((stream (gensym "stream"))
+        (fname (gensym (symbol-name name))))
     `(progn
-       (setf *pages* (union *pages* (list ',name)))
+       (setf *pages* (union *pages* (list ',fname)))
        (push (create-prefix-dispatcher
-              (format nil "/~(~a~)" ',name) ',name)
+              (format nil "/~(~a~)" ',name) ',fname)
              *dispatch-table*)
-       (defun ,name ()
+       (defun ,fname ()
          (with-html-output-to-string (,stream nil :indent t)
            ,@body)))))
 

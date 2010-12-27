@@ -19,6 +19,14 @@
               (str (url link)))
           :br)))
 
+(defun all-links ()
+  (select 'link :flatp t :refresh t))
+
+(defun add-link (url tags user)
+  (let ((link (make-instance 'link
+                             :url url :tags tags :user user)))
+    (update-records-from-instance link)))
+
 (defpage links "All links"
   (:ul
    (mapcar (lambda (x)
@@ -28,7 +36,7 @@
 (defpage new-link "New link"
   (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
-       (add-link (parameter "url") (parameter "tags"))
+       (add-link (parameter "url") (parameter "tags") (session-value :user))
        (:p "Link added"))
       (htm
        (:form :action "new-link" :method "post"
@@ -36,10 +44,3 @@
               (:p "Tags:" (:input :type "text" :name "tags"))
               (:p (:input :type "submit" :value "Add"))))))
 
-(defun all-links ()
-  (select 'link :flatp t :refresh t))
-
-(defun add-link (url tags)
-  (let ((link (make-instance 'link
-                             :url url :tags tags)))
-    (update-records-from-instance link)))

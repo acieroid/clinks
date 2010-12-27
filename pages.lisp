@@ -1,9 +1,9 @@
 (in-package :clinks)
 
 (defvar *pages* nil)
-(defvar *menu-elements*
-  '((links "all")
-    (new "new-link")))
+(defparameter *menu-elements*
+  '((links "All")
+    (new-link "New link")))
 
 (defun print-menu ()
   (with-html-output-to-string (stream)

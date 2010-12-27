@@ -6,6 +6,6 @@
   :components ((:file "package")
                (:file "clinks")
                (:file "pages")
-               (:file "links")
-               (:file "users")))
+               (:file "users")
+               (:file "links")))
 

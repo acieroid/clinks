@@ -13,20 +13,26 @@
    (tags :db-kind :join :db-info (:join-class tag :home-key id :foreign-key link-id :set t)
          :accessor tags)))
 
+(defun delete-url (link)
+  (concatenate 'string "delete/" (url link)))
+
 (defmethod print-html ((link link))
   (with-html-output-to-string (stream)
     (:div :class "link"
           (:a :href (url link)
               (str (url link)))
+          " "
+          (:a :href (delete-url link)
+              "x")
           :br
           (:div :class "tags"
-              (mapcar (lambda (tag) (str (print-html tag)))
+                (mapcar (lambda (tag) (htm (str (print-html tag)) " "))
                       (tags link))))))
 
 (defun all-links ()
   (select 'link :flatp t :refresh t))
 
-.#(locally-enable-sql-reader-syntax)
+#.(locally-enable-sql-reader-syntax)
 
 (defun add-link (url tags user)
   (let ((link (make-instance 'link :url url :user-id (id user))))
@@ -37,10 +43,14 @@
 
 (defun find-link (url user)
   (first (select 'link :where [and [= [user-id] (id user)]
-                 [= [url] url]]
+                                   [= [url] url]]
                  :refresh t :flatp t)))
 
-.#(disable-sql-reader-syntax)
+(defun user-links (user)
+  (select 'link :where [= [user-id] (id user)]
+          :refresh t :flatp t))
+
+#.(disable-sql-reader-syntax)
 
 (defun delete-link (url user)
   (let ((link (find-link url user)))
@@ -50,13 +60,13 @@
       (delete-instance-records link)
       (mapcar #'delete-instance-records tags))))
 
-(defpage links "All links"
+(defpagel links "My links"
   (:ul
    (mapcar (lambda (x)
              (htm (:li (str (print-html x)))))
-           (all-links))))
+           (user-links (current-user)))))
 
-(defpage new-link "New link"
+(defpagel new-link "New link"
   (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
        (add-link (parameter "url") (split-tags (parameter "tags")) (current-user))

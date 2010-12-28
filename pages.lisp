@@ -44,3 +44,8 @@
        (str (print-menu))
        ,@body))))
 
+(defmacro defpagel (name title &body body)
+  `(defpage ,name ,title
+     (if (current-user)
+         (progn (htm,@body))
+         (htm "You must be connected to see this page"))))

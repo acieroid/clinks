@@ -18,6 +18,9 @@
   (first (select 'user :where [= [username] username] :refresh t :flatp t)))
 #.(restore-sql-reader-syntax-state)
 
+(defun current-user ()
+  (find-user (session-value :user)))
+
 (defun add-user (username password)
   (when (find-user username)
     (error "User already exists"))

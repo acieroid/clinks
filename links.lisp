@@ -77,3 +77,7 @@
               (:p "Tags:" (:input :type "text" :name "tags") " (space delimited)")
               (:p (:input :type "submit" :value "Add"))))))
 
+
+(defaction delete "Delete" url
+  (delete-link url (current-user))
+  "Link deleted")

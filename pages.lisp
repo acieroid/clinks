@@ -49,3 +49,9 @@
      (if (current-user)
          (progn (htm,@body))
          (htm "You must be connected to see this page"))))
+
+(defmacro defaction (name title arg &body body)
+  `(defpage ,name ,title
+     (let* ((,arg (subseq (request-uri*)
+                          (1+ (position #\/ (request-uri*) :start 1)))))
+       ,@body)))

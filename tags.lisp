@@ -1,4 +1,4 @@
-(in-package :clinks)
+s(in-package :clinks)
 
 (def-view-class tag ()
   ((id :type integer :db-kind :key :initform nil

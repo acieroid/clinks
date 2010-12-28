@@ -35,7 +35,20 @@
     (let ((id (first (select [max [id]] :from 'link :flatp t :refresh t))))
       (mapcar (curry #'create-tag id) tags))))
 
+(defun find-link (url user)
+  (first (select 'link :where [and [= [user-id] (id user)]
+                 [= [url] url]]
+                 :refresh t :flatp t)))
+
 .#(disable-sql-reader-syntax)
+
+(defun delete-link (url user)
+  (let ((link (find-link url user)))
+    (unless link
+      (error "No such link ~a" url))
+    (let ((tags (tags link)))
+      (delete-instance-records link)
+      (mapcar #'delete-instance-records tags))))
 
 (defpage links "All links"
   (:ul

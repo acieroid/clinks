@@ -1,6 +1,5 @@
 (in-package :clinks)
 
-(defvar *pages* nil)
 (defparameter *menu-elements*
   '((links "All")
     (new-link "New link")))
@@ -26,7 +25,6 @@
   (let ((stream (gensym "stream"))
         (fname (gensym (symbol-name name))))
     `(progn
-       (setf *pages* (union *pages* (list ',fname)))
        (push (create-prefix-dispatcher
               (format nil "/~(~a~)" ',name) ',fname)
              *dispatch-table*)

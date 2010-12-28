@@ -24,15 +24,18 @@
   (let ((user (make-instance 'user :username username :password password)))
     (update-records-from-instance user)))
 
-(defun connect-user (username password)
+(defun right-user-ids-p (username password)
   (let ((user (find-user username)))
-    (if (and user
-             (string= (password user) password))
-        (progn
-          (start-session)
-          (setf (session-value :user) username))
-        ;; TODO: use conditions and an error page?
-        (error "No such user or wrong password"))))
+    (and user
+         (string= (password user) password))))
+
+(defun connect-user (username password)
+  (if (right-user-ids-p username password)
+      (progn
+        (start-session)
+        (setf (session-value :user) username))
+      ;; TODO: use conditions and an error page?
+      (error "No such user or wrong password")))
 
 (defun user-form (page name)
   (with-html-output-to-string (stream)

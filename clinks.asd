@@ -7,5 +7,6 @@
                (:file "clinks")
                (:file "pages")
                (:file "users")
-               (:file "links")))
+               (:file "links")
+               (:file "api")))
 

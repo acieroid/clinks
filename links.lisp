@@ -73,11 +73,19 @@
       (delete-instance-records link)
       (mapcar #'delete-instance-records tags))))
 
+(defun get-page-title (url)
+  (multiple-value-bind (string results)
+      (ppcre:scan-to-strings "<title>\\s*([^\\s]*)\\s*</title>"
+                             (drakma:http-request url))
+    (declare (ignore string))
+    (aref results 0)))
+
 (defun link-form (page name &optional (link (make-instance 'link)))
   (with-html-output-to-string (stream)
     (:form :action page :method "post"
            (:p "URL:" (:input :type "text" :name "url" :value (url link)))
-           (:p "Title: " (:input :type "text" :name "title" :value (title link)))
+           (:p "Title: " (:input :type "text" :name "title" :value (title link))
+               " (will be filled automatically)")
            (:p "Tags:" (:input :type "text" :name "tags"
                                :value (format nil "~{~a ~}"
                                               (mapcar #'tag-name (tags link))))
@@ -96,7 +104,10 @@
 (defpagel new-link "New link"
   (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
-       (add-link (current-user) (parameter "url") (parameter "title")
+       (add-link (current-user) (parameter "url")
+                 (if (string= (parameter "title") "")
+                     (get-page-title (parameter "url"))
+                     (parameter "title"))
                  (split-tags (parameter "tags"))
                  (parameter "notes")
                  (string= (parameter "private") "on"))

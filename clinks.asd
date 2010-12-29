@@ -5,7 +5,7 @@
   :depends-on ("alexandria" "split-sequence"
                "hunchentoot" "cl-who"
                "clsql" "clsql-sqlite3"
-               "ironclad")
+               "ironclad" "drakma" "cl-ppcre")
   :components ((:file "package")
                (:file "clinks")
                (:file "pages")

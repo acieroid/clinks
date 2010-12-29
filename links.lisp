@@ -91,8 +91,11 @@
                                               (mapcar #'tag-name (tags link))))
                " (space delimited)")
            (:p "Notes: " (:textarea :name "notes" :value (notes link)))
-           (:p "Private: " (:input :type "checkbox" :name "private"
-                                   :checked (if (private link) "yes" "no")))
+           (:p "Private: "
+               (if (private link)
+                   ;; Whatever is the checked value, it's always checked :(
+                   (htm (:input :type "checkbox" :name "private" :checked ""))
+                   (htm (:input :type "checkbox" :name "private)"))))
            (:p (:input :type "submit" :value name)))))
 
 (defpagel links "My links"

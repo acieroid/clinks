@@ -55,3 +55,7 @@
      (let* ((,arg (subseq (request-uri*)
                           (1+ (position #\/ (request-uri*) :start 1)))))
        ,@body)))
+
+(defun get-action-url (action arg)
+  (concatenate 'string action "/" arg))
+

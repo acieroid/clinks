@@ -1,4 +1,4 @@
-s(in-package :clinks)
+(in-package :clinks)
 
 (def-view-class tag ()
   ((id :type integer :db-kind :key :initform nil
@@ -19,10 +19,10 @@ s(in-package :clinks)
 
 (defmethod print-html ((tag tag))
   (with-html-output-to-string (stream)
-    (:a :href (url-for-tag (tag-name tag))
-        (str (tag-name tag)))))
+    (:span :class "tag"
+           (:a :href (url-for-tag (tag-name tag))
+               (str (tag-name tag))))))
 
 (defun create-tag (link-id name)
   (let ((tag (make-instance 'tag :link-id link-id :name name)))
     (update-records-from-instance tag)))
-

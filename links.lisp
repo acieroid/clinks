@@ -3,43 +3,56 @@
 (def-view-class link ()
   ((id :type integer :db-kind :key :initform nil
        :reader id)
-   (user-id :type integer
-            :initarg :user-id)
-   (url :type string
-        :accessor url :initarg :url)
+   (user-id :type integer :initarg :user-id)
+   (url :type string :accessor url :initform "" :initarg :url)
+   (title :type string :accessor title :initform "" :initarg :title)
+   (notes :type string :accessor notes :initform "" :initarg :notes)
+   (private :type boolean :accessor private :initform nil :initarg :private)
    ;; Joins
-   (user :db-kind :join :db-info (:join-class user :home-key user-id :foreign-key id :set nil)
+   (user :db-kind :join :db-info (:join-class user :home-key user-id
+                                  :foreign-key id :set nil)
          :accessor user)
-   (tags :db-kind :join :db-info (:join-class tag :home-key id :foreign-key link-id :set t)
+   (tags :db-kind :join :db-info (:join-class tag :home-key id
+                                  :foreign-key link-id :set t)
          :accessor tags)))
-
-(defun delete-url (link)
-  (concatenate 'string "delete/" (url link)))
 
 (defmethod print-html ((link link))
   (with-html-output-to-string (stream)
     (:div :class "link"
           (:a :href (url link)
-              (str (url link)))
+              (str (title link)))
           " "
-          (:a :href (delete-url link)
-              "x")
+          (:a :href (get-action-url "edit" (url link)) "edit") " "
+          (:a :href (get-action-url "delete" (url link))  "x")
           :br
           (:div :class "tags"
                 (mapcar (lambda (tag) (htm (str (print-html tag)) " "))
-                      (tags link))))))
+                      (tags link)))
+          (:div :class "notes"
+                (str (notes link))))))
 
 (defun all-links ()
   (select 'link :flatp t :refresh t))
 
 #.(locally-enable-sql-reader-syntax)
 
-(defun add-link (url tags user)
-  (let ((link (make-instance 'link :url url :user-id (id user))))
+(defun add-link (user url &optional (title "") (tags nil) (notes "") (private nil))
+  (let ((link (make-instance 'link :url url
+                             :title title :notes notes
+                             :private private
+                             :user-id (id user))))
     (update-records-from-instance link)
     ;; The id is set in the db, not in our object
     (let ((id (first (select [max [id]] :from 'link :flatp t :refresh t))))
       (mapcar (curry #'create-tag id) tags))))
+
+(defun edit-link (link url title tags notes private)
+  (setf (url link) url
+        (title link) title
+        (notes link) notes
+        (private link) private)
+  (delete-records :from [tag] :where [= [link-id] (id link)])
+  (mapcar (curry #'create-tag (id link)) tags))
 
 (defun find-link (url user)
   (first (select 'link :where [and [= [user-id] (id user)]
@@ -60,6 +73,20 @@
       (delete-instance-records link)
       (mapcar #'delete-instance-records tags))))
 
+(defun link-form (page name &optional (link (make-instance 'link)))
+  (with-html-output-to-string (stream)
+    (:form :action page :method "post"
+           (:p "URL:" (:input :type "text" :name "url" :value (url link)))
+           (:p "Title: " (:input :type "text" :name "title" :value (title link)))
+           (:p "Tags:" (:input :type "text" :name "tags"
+                               :value (format nil "~{~a ~}"
+                                              (mapcar #'tag-name (tags link))))
+               " (space delimited)")
+           (:p "Notes: " (:textarea :name "notes" :value (notes link)))
+           (:p "Private: " (:input :type "checkbox" :name "private"
+                                   :checked (if (private link) "yes" "no")))
+           (:p (:input :type "submit" :value name)))))
+
 (defpagel links "My links"
   (:ul
    (mapcar (lambda (x)
@@ -69,14 +96,23 @@
 (defpagel new-link "New link"
   (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
-       (add-link (parameter "url") (split-tags (parameter "tags")) (current-user))
+       (add-link (current-user) (parameter "url") (parameter "title")
+                 (split-tags (parameter "tags"))
+                 (parameter "notes")
+                 (string= (parameter "private") "on"))
        (:p "Link added"))
-      (htm
-       (:form :action "new-link" :method "post"
-              (:p "URL:" (:input :type "text" :name "url"))
-              (:p "Tags:" (:input :type "text" :name "tags") " (space delimited)")
-              (:p (:input :type "submit" :value "Add"))))))
+      (str (link-form "new-link" "Add"))))
 
+(defaction edit "Edit" url
+  (let ((link (find-link url (current-user))))
+    (if (and (parameter "url") (not (string= (parameter "url") "")))
+        (htm
+         (edit-link link (parameter "url") (parameter "title")
+                    (split-tags (parameter "tags"))
+                    (parameter "notes")
+                    (string= (parameter "private") "on"))
+         "Link edited")
+        (str (link-form (request-uri*) "Edit" link)))))
 
 (defaction delete "Delete" url
   (delete-link url (current-user))

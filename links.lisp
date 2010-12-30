@@ -8,6 +8,7 @@
    (title :type string :accessor title :initform "" :initarg :title)
    (notes :type string :accessor notes :initform "" :initarg :notes)
    (private :type boolean :accessor private :initform nil :initarg :private)
+   (timestamp :type integer :accessor timestamp :initform 0 :initarg :timestamp)
    ;; Joins
    (user :db-kind :join :db-info (:join-class user :home-key user-id
                                   :foreign-key id :set nil)
@@ -16,11 +17,19 @@
                                   :foreign-key link-id :set t)
          :accessor tags)))
 
+(defmethod date ((link link))
+  (multiple-value-bind (s m h date month year day daylight tz)
+      (decode-universal-time (timestamp link))
+    (declare (ignore s m h day daylight tz))
+    (format nil "~a-~a-~a" month date year)))
+
 (defmethod print-html ((link link))
   (with-html-output-to-string (stream)
     (:div :class "link"
           (:a :href (url link)
               (str (title link)))
+          " "
+          (str (date link))
           " "
           (:a :href (get-action-url "edit" (url link)) "edit") " "
           (:a :href (get-action-url "delete" (url link))  "x")
@@ -40,7 +49,8 @@
   (let ((link (make-instance 'link :url url
                              :title title :notes notes
                              :private private
-                             :user-id (id user))))
+                             :user-id (id user)
+                             :timestamp (get-universal-time))))
     (update-records-from-instance link)
     ;; The id is set in the db, not in our object
     (let ((id (first (select [max [id]] :from 'link :flatp t :refresh t))))

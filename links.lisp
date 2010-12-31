@@ -12,10 +12,7 @@
    ;; Joins
    (user :db-kind :join :db-info (:join-class user :home-key user-id
                                   :foreign-key id :set nil)
-         :accessor user)
-   (tags :db-kind :join :db-info (:join-class tag :home-key id
-                                  :foreign-key link-id :set t)
-         :accessor tags)))
+         :accessor user)))
 
 (defmethod date ((link link))
   (multiple-value-bind (s m h date month year day daylight tz)
@@ -44,6 +41,12 @@
   (select 'link :flatp t :refresh t))
 
 #.(locally-enable-sql-reader-syntax)
+(defmethod tags ((link link))
+  (mapcar #'first
+          (select 'tag 'tag-join :where [and [= [slot-value 'tag-join 'link-id] (id link)]
+                                             [= [slot-value 'tag-join 'tag-id] [slot-value 'tag 'id]]]
+                  :refresh t :flatp t)))
+
 
 (defun add-link (user url &optional (title "") (tags nil) (notes "") (private nil))
   (let ((link (make-instance 'link :url url
@@ -141,3 +144,18 @@
 (defaction delete "Delete" url
   (delete-link url (current-user))
   "Link deleted")
+
+#.(locally-enable-sql-reader-syntax)
+;; TODO: multiple tag filter
+(defaction tag "Tag" name
+  (let* ((tag-id (id (find-tag name)))
+         (links (mapcar #'first
+                       (select 'link 'tag-join :where [and [= [slot-value 'tag-join 'tag-id]
+                                                              tag-id]
+                                                           [= [slot-value 'tag-join 'link-id]
+                                                              [slot-value 'link 'id]]]))))
+    (htm (:ul (mapcar (lambda (x)
+                        (htm (:li (str (print-html x)))))
+                      links)))))
+
+#.(disable-sql-reader-syntax)

@@ -156,7 +156,8 @@
                         (select 'link 'tag-join :where [and [= [slot-value 'tag-join 'tag-id]
                                                                 tag-id]
                                                             [= [slot-value 'tag-join 'link-id]
-                                                               [slot-value 'link 'id]]]))))
+                                                               [slot-value 'link 'id]]]
+                                :refresh t))))
     ;; This is ugly as shit
     (mapcar (lambda (tag)
               (delete-if-not (lambda (link)

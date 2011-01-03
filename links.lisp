@@ -95,7 +95,9 @@
       (ppcre:scan-to-strings "<title>\\s*([^\\s]*)\\s*</title>"
                              (drakma:http-request url))
     (declare (ignore string))
-    (aref results 0)))
+    (if results
+        (aref results 0)
+        "")))
 
 (defun link-form (page name &optional (link (make-instance 'link)))
   (with-html-output-to-string (stream)

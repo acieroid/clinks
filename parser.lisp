@@ -1,3 +1,5 @@
+(defparameter *create-link-fun* #'list)
+
 (defun is-number (char)
   (and (>= (char-code char) (char-code #\0))
        (<= (char-code char) (char-code #\9))))
@@ -37,7 +39,7 @@
 (defun unix-to-universal-time (time)
   (+ time 2208988800))
 
-(defun parse-link (string notes &optional (create-link-fun #'list))
+(defun parse-link (string notes)
   (with-input-from-string (stream string)
     (next-string-is stream "<DT>")
     (next-string-is stream "<A HREF=")
@@ -52,9 +54,9 @@
                  (end (read-line stream))
                  (title (subseq end 1 (- (length end) 4)))
                  (notes (subseq notes 4)))
-            (funcall create-link-fun link date private tags title notes)))))))
+            (funcall *create-link-fun* link date private tags title notes)))))))
 
-(defun parse-from-stream (stream create-link-fun)
+(defun parse-from-stream (stream)
   (let (links)
     (skip-header stream)
     (next-string-is stream "<DL><p>")
@@ -65,13 +67,12 @@
         (push (parse-link line
                           (if (starts-with next-line "<DD>")
                               next-line
-                              "<DD>")
-                          create-link-fun)
-              links))
-     (reverse links))))
+                              "<DD>"))
+              links)))
+    (nreverse links)))
 
-(defun parse (file &optional (create-link-fun #'list))
+(defun parse (file)
   (with-open-file (stream file
                           :direction :input
                           :external-format :utf-8)
-    (parse-from-stream stream create-link-fun)))
+    (parse-from-stream stream)))

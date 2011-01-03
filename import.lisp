@@ -2,7 +2,8 @@
 
 (defpagel import "Import"
   (if (parameter "file")
-      (let ((*create-link-fun* (curry #'add-link (current-user))))
+      (let ((*create-link-fun* (curry #'add-link (current-user)))
+            (*tags-separator* #\,))
         (parse (parameter "file")))
       (htm
        (:form :action "import" :method "post"

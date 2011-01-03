@@ -1,5 +1,7 @@
 (in-package :clinks)
 
+(defparameter *tags-separator* #\Space)
+
 (def-view-class tag ()
   ((id :type integer :db-kind :key :initform nil
        :reader id)
@@ -15,7 +17,7 @@
   (concatenate 'string "tag/" name))
 
 (defun split-tags (tags)
-  (split-sequence:split-sequence #\Space tags))
+  (split-sequence:split-sequence *tags-separator* tags))
 
 (defmethod print-html ((tag tag))
   (with-html-output-to-string (stream)

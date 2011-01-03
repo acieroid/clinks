@@ -50,11 +50,11 @@
          (progn (htm,@body))
          (htm "You must be connected to see this page"))))
 
-(defmacro defaction (name title arg &body body)
+(defmacro defaction (name title args &body body)
   `(defpage ,name ,title
-     (let* ((,arg (subseq (request-uri*)
-                          (1+ (position #\/ (request-uri*) :start 1)))))
-       ,@body)))
+     (labels ((f ,args
+                ,@body))
+       (apply #'f (cdr (split-sequence:split-sequence #\/ (request-uri*) :start 1))))))
 
 (defun get-action-url (action arg)
   (concatenate 'string action "/" arg))

@@ -149,14 +149,20 @@
   "Link deleted")
 
 #.(locally-enable-sql-reader-syntax)
-;; TODO: multiple tag filter
-(defaction tag "Tag" name
-  (let* ((tag-id (id (find-tag name)))
+(defaction tag "Tag" (tag &rest tags)
+  (let* ((tag-id (id (find-tag tag)))
          (links (mapcar #'first
-                       (select 'link 'tag-join :where [and [= [slot-value 'tag-join 'tag-id]
-                                                              tag-id]
-                                                           [= [slot-value 'tag-join 'link-id]
-                                                              [slot-value 'link 'id]]]))))
+                        (select 'link 'tag-join :where [and [= [slot-value 'tag-join 'tag-id]
+                                                                tag-id]
+                                                            [= [slot-value 'tag-join 'link-id]
+                                                               [slot-value 'link 'id]]]))))
+    ;; This is ugly as shit
+    (mapcar (lambda (tag)
+              (delete-if-not (lambda (link)
+                               (find tag (tags link)
+                                     :test (lambda (name tag) (string= name (tag-name tag)))))
+                             links))
+            tags)
     (htm (:ul (mapcar (lambda (x)
                         (htm (:li (str (print-html x)))))
                       links)))))

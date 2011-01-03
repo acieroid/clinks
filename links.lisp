@@ -48,16 +48,19 @@
                   :refresh t :flatp t)))
 
 
-(defun add-link (user url &optional (title "") (tags nil) (notes "") (private nil))
+(defun add-link (user
+                 &key (url "") (title "") (tags "") (notes "") (private nil)
+                      (timestamp (get-universal-time)))
   (let ((link (make-instance 'link :url url
                              :title title :notes notes
                              :private private
                              :user-id (id user)
-                             :timestamp (get-universal-time))))
+                             :timestamp timestamp)))
     (update-records-from-instance link)
     ;; The id is set in the db, not in our object
-    (let ((id (first (select [max [id]] :from 'link :flatp t :refresh t))))
-      (mapcar (curry #'create-tag id) tags))))
+    (let ((id (first (select [max [id]] :from 'link :flatp t :refresh t)))
+          (tags-list (split-tags tags)))
+      (mapcar (curry #'create-tag id) tags-list))))
 
 (defun edit-link (link url title tags notes private)
   (setf (url link) url
@@ -120,13 +123,13 @@
 (defpagel new-link "New link"
   (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
-       (add-link (current-user) (parameter "url")
-                 (if (string= (parameter "title") "")
-                     (get-page-title (parameter "url"))
-                     (parameter "title"))
-                 (split-tags (parameter "tags"))
-                 (parameter "notes")
-                 (string= (parameter "private") "on"))
+       (add-link (current-user) :url (parameter "url")
+                 :title (if (string= (parameter "title") "")
+                            (get-page-title (parameter "url"))
+                            (parameter "title"))
+                 :tags (parameter "tags")
+                 :notes (parameter "notes")
+                 :private (string= (parameter "private") "on"))
        (:p "Link added"))
       (str (link-form "new-link" "Add"))))
 

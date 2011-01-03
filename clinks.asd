@@ -12,5 +12,7 @@
                (:file "users")
                (:file "tags")
                (:file "links")
-               (:file "api")))
+               (:file "api")
+               (:file "parser")
+               (:file "import")))
 

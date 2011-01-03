@@ -1,3 +1,4 @@
+(in-package :clinks)
 (defparameter *create-link-fun* #'list)
 
 (defun is-number (char)
@@ -43,10 +44,10 @@
   (with-input-from-string (stream string)
     (next-string-is stream "<DT>")
     (next-string-is stream "<A HREF=")
-    (let ((link (read-string stream)))
+    (let ((url (read-string stream)))
       (next-string-is stream " ADD_DATE=")
-      (let ((date (unix-to-universal-time
-                   (parse-integer (read-string stream)))))
+      (let ((timestamp (unix-to-universal-time
+                        (parse-integer (read-string stream)))))
         (next-string-is stream " PRIVATE=")
         (let ((private (string= (read-string stream) "1")))
           (next-string-is stream " TAGS=")
@@ -54,7 +55,10 @@
                  (end (read-line stream))
                  (title (subseq end 1 (- (length end) 4)))
                  (notes (subseq notes 4)))
-            (funcall *create-link-fun* link date private tags title notes)))))))
+            (funcall *create-link-fun*
+                     :url url :timestamp timestamp
+                     :private private :tags tags
+                     :title title :notes notes)))))))
 
 (defun parse-from-stream (stream)
   (let (links)

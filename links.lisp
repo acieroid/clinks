@@ -67,7 +67,8 @@
         (title link) title
         (notes link) notes
         (private link) private)
-  (delete-records :from [tag] :where [= [link-id] (id link)])
+  ;; TODO: let tags without any joins to them ?
+  (delete-records :from [tag-join] :where [= [link-id] (id link)])
   (mapcar (curry #'create-tag (id link)) tags))
 
 (defun find-link (url user)

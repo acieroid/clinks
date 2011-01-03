@@ -34,28 +34,41 @@
   (loop for line = (read-line stream)
        until (starts-with line "<H1>")))
 
-(defun parse-link (string &optional (create-link-fun #'list))
+(defun unix-to-universal-time (time)
+  (+ time 2208988800))
+
+(defun parse-link (string notes &optional (create-link-fun #'list))
   (with-input-from-string (stream string)
     (next-string-is stream "<DT>")
     (next-string-is stream "<A HREF=")
     (let ((link (read-string stream)))
       (next-string-is stream " ADD_DATE=")
-      (let ((date (parse-integer (read-string stream))))
+      (let ((date (unix-to-universal-time
+                   (parse-integer (read-string stream)))))
         (next-string-is stream " PRIVATE=")
         (let ((private (string= (read-string stream) "1")))
           (next-string-is stream " TAGS=")
           (let* ((tags (read-string stream))
                  (end (read-line stream))
-                 (title (subseq end 1 (- (length end) 4))))
-            (funcall create-link-fun link date private tags title)))))))
+                 (title (subseq end 1 (- (length end) 4)))
+                 (notes (subseq notes 4)))
+            (funcall create-link-fun link date private tags title notes)))))))
 
 (defun parse-from-stream (stream create-link-fun)
-  (skip-header stream)
-  (next-string-is stream "<DL><p>")
-  (loop for line = (read-line stream)
-       until (starts-with line "</DL>")
-       when (starts-with line "<DT>") ;; ignoring notes for the moment
-       collect (parse-link line create-link-fun)))
+  (let (links)
+    (skip-header stream)
+    (next-string-is stream "<DL><p>")
+    (do ((line (read-line stream) next-line)
+         (next-line (read-line stream) (read-line stream)))
+        ((or (starts-with line "</DL>") (starts-with next-line "</DL>")))
+      (when (starts-with line "<DT>")
+        (push (parse-link line
+                          (if (starts-with next-line "<DD>")
+                              next-line
+                              "<DD>")
+                          create-link-fun)
+              links))
+     (reverse links))))
 
 (defun parse (file &optional (create-link-fun #'list))
   (with-open-file (stream file

@@ -22,7 +22,7 @@
 
 (defun start-databases (db-specs db-type)
   (connect-db db-specs db-type)
-  (create-tables 'user 'link 'tag))
+  (create-tables 'user 'link 'tag 'tag-join))
 
 (defun start (&optional (port 8000) (db-specs '("clinks.db")) (db-type :sqlite3))
   (start-databases db-specs db-type)

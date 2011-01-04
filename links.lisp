@@ -1,6 +1,7 @@
 (in-package :clinks)
 
 (defparameter *links-per-page* 10)
+(defparameter *pages-links-shown* 10)
 
 (def-view-class link ()
   ((id :type integer :db-kind :key :initform nil
@@ -45,6 +46,23 @@
      (mapcar (lambda (x)
                (htm (:li (str (print-html x)))))
              links))))
+
+(defun range (x y)
+  (loop for i from x to y collect i))
+
+(defun print-pager (action n pages)
+  (with-html-output-to-string (stream)
+    (:div :class "pager"
+          (let* ((first (max 0 (- n (/ *pages-links-shown* 2))))
+                 (last (min (+ first *pages-links-shown*) pages)))
+            (mapcar (lambda (x)
+                      (if (= x n)
+                          (str x)
+                          (htm (:a :href  (get-action-url action
+                                                          (format nil "~a" x))
+                                   (str x))))
+                      (str " "))
+                    (range first last))))))
 
 (defun all-links ()
   (select 'link :flatp t :refresh t))
@@ -163,9 +181,10 @@
   "Link deleted")
 
 (defaction links "My links" (&optional (page "0"))
-  (str
-   (print-links (links-at-page (user-links (current-user))
-                               (parse-integer page)))))
+  (let ((links (user-links (current-user)))
+        (page (parse-integer page)))
+    (str (print-links (links-at-page (user-links (current-user)) page)))
+    (str (print-pager "links" page (n-pages links)))))
 
 
 #.(locally-enable-sql-reader-syntax)

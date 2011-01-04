@@ -29,8 +29,10 @@
                                               :error (str e)))))
                    (htm (:result :code "access denied"))))))))))
 
-(defapi posts/add (url tags)
-  (add-link url (split-tags tags) user)
+(defapi posts/add (url description extended tags shared)
+  ;; differences with delicious: replace and dt
+  (add-link user :url url :tags tags :notes extended
+            :private (string= shared "yes"))
   (htm (:response :code "done")))
 
 (defapi posts/delete (url)

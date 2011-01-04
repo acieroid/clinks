@@ -189,8 +189,10 @@
 
 
 #.(locally-enable-sql-reader-syntax)
-(defaction tag "Tag" (tag &rest tags)
-  (let* ((tag-id (id (find-tag tag)))
+;; TODO: only select user's links
+;; TODO: filter url
+(defun filter-links (tags)
+  (let* ((tag-id (id (find-tag (first tags))))
          (links (mapcar #'first
                         (select 'link 'tag-join :where [and [= [slot-value 'tag-join 'tag-id]
                                                                 tag-id]
@@ -203,9 +205,13 @@
                                (find tag (tags link)
                                      :test (lambda (name tag) (string= name (tag-name tag)))))
                              links))
-            tags)
+            (rest tags))
+    links))
+#.(disable-sql-reader-syntax)
+
+(defaction tag "Tag" (&rest tags)
+  (let* ((links (filter-links tags)))
     (htm (:ul (mapcar (lambda (x)
                         (htm (:li (str (print-html x)))))
                       links)))))
 
-#.(disable-sql-reader-syntax)

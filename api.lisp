@@ -31,10 +31,26 @@
 
 (defapi posts/add (url description extended tags shared)
   ;; differences with delicious: replace and dt
-  (add-link user :url url :tags tags :notes extended
+  (add-link user :url url :title description :tags tags :notes extended
             :private (string= shared "yes"))
   (htm (:response :code "done")))
 
 (defapi posts/delete (url)
   (delete-link url user)
   (htm (:response :code "done")))
+
+(defapi posts/get (tag url)
+  ;; TODO: url filtering
+  (flet ((space-separated-tags (tags)
+           (reduce (lambda (last tag)
+                     (concatenate 'string last " " (tag-name tag)))
+                   tags)))
+    (htm
+     (:posts :user (username user)
+             (mapcar (lambda (l)
+                       (htm (:post
+                             :href (url l)
+                             :description (title l)
+                             :extended (notes l)
+                             :tag (space-separated-tags (tags l)))))
+                     (filter-links (list tag)))))))

@@ -112,7 +112,8 @@
 
 (defun links-at-page (links page)
   (let ((first-at (* page *links-per-page*))
-        (last-at (* (1+ page) *links-per-page*)))
+        (last-at (min (* (1+ page) *links-per-page*)
+                      (length links))))
     (subseq links first-at last-at)))
 
 #.(disable-sql-reader-syntax)

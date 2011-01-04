@@ -3,7 +3,9 @@
 (defparameter *css-file* "design.css")
 
 ;; For debug only
-(setf *show-lisp-errors-p* t)
+(setf *show-lisp-errors-p* t
+      *hunchentoot-default-external-format* :utf-8
+      *default-content-type* "text/html; charset=utf-8")
 
 (defun find-db (name)
   (find-if (lambda (db)

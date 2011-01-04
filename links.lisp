@@ -1,5 +1,7 @@
 (in-package :clinks)
 
+(defparameter *links-per-page* 10)
+
 (def-view-class link ()
   ((id :type integer :db-kind :key :initform nil
        :reader id)
@@ -36,6 +38,13 @@
                       (tags link)))
           (:div :class "notes"
                 (str (notes link))))))
+
+(defun print-links (links)
+  (with-html-output-to-string (stream)
+    (:ul
+     (mapcar (lambda (x)
+               (htm (:li (str (print-html x)))))
+             links))))
 
 (defun all-links ()
   (select 'link :flatp t :refresh t))
@@ -80,6 +89,14 @@
   (select 'link :where [= [user-id] (id user)]
           :refresh t :flatp t))
 
+(defun n-pages (links)
+  (/ (length links) *links-per-page*))
+
+(defun links-at-page (links page)
+  (let ((first-at (* page *links-per-page*))
+        (last-at (* (1+ page) *links-per-page*)))
+    (subseq links first-at last-at)))
+
 #.(disable-sql-reader-syntax)
 
 (defun delete-link (url user)
@@ -117,12 +134,6 @@
                    (htm (:input :type "checkbox" :name "private)"))))
            (:p (:input :type "submit" :value name)))))
 
-(defpagel links "My links"
-  (:ul
-   (mapcar (lambda (x)
-             (htm (:li (str (print-html x)))))
-           (user-links (current-user)))))
-
 (defpagel new-link "New link"
   (if (and (parameter "url") (not (string= (parameter "url") "")))
       (htm
@@ -136,7 +147,7 @@
        (:p "Link added"))
       (str (link-form "new-link" "Add"))))
 
-(defaction edit "Edit" url
+(defaction edit "Edit" (url)
   (let ((link (find-link url (current-user))))
     (if (and (parameter "url") (not (string= (parameter "url") "")))
         (htm
@@ -147,9 +158,15 @@
          "Link edited")
         (str (link-form (request-uri*) "Edit" link)))))
 
-(defaction delete "Delete" url
+(defaction delete "Delete" (url)
   (delete-link url (current-user))
   "Link deleted")
+
+(defaction links "My links" (&optional (page "0"))
+  (str
+   (print-links (links-at-page (user-links (current-user))
+                               (parse-integer page)))))
+
 
 #.(locally-enable-sql-reader-syntax)
 (defaction tag "Tag" (tag &rest tags)

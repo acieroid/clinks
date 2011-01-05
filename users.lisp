@@ -58,15 +58,19 @@
            (parameter "password") (> (length (parameter "password")) 5))
       (progn
         (add-user (parameter "username") (hash-password (parameter "password")))
-        (str "Registration successful"))
+        (str "Registration successful")
+        (connect-user (parameter "username") (hash-password (parameter "password")))
+        (redirect *home-page*))
       (str (user-form "register" "Register!"))))
 
 (defpage connect "Connect"
   (if (and (parameter "username") (parameter "password"))
       (progn
         (connect-user (parameter "username") (hash-password (parameter "password")))
-        (str "Connection successful"))
+        (str "Connection successful")
+        (redirect *home-page*))
       (str (user-form "connect" "Connect!"))))
 
 (defpage disconnect "Disconnect"
-  (remove-session *session*))
+  (remove-session *session*)
+  (redirect *home-page*))

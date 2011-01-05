@@ -1,6 +1,7 @@
 (in-package #:clinks)
 
 (defparameter *css-file* "design.css")
+(defparameter *home-page* "/links")
 
 ;; For debug only
 (setf *show-lisp-errors-p* t

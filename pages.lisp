@@ -2,7 +2,8 @@
 
 (defparameter *menu-elements*
   '((links "All")
-    (new-link "New link")))
+    (new-link "New link")
+    (import "Import")))
 
 (defun print-menu ()
   (with-html-output-to-string (stream)

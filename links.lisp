@@ -133,7 +133,7 @@
 
 (defun get-page-title (url)
   (multiple-value-bind (string results)
-      (ppcre:scan-to-strings "<title>\\s*([^\\s]*)\\s*</title>"
+      (ppcre:scan-to-strings "<title>\\s*(\\S.*\\S)\\s*</title>"
                              (drakma:http-request url))
     (declare (ignore string))
     (if results

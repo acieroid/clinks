@@ -5,7 +5,7 @@
     (new-link "New link")))
 
 (defun print-menu ()
-  (with-html-output-to-string (stream nil :indent t)
+  (with-html-output-to-string (stream)
     (:div :class "menu"
           (flet ((print-link (element)
                    (let ((link (first element))

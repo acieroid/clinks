@@ -14,13 +14,15 @@
            :accessor tag-id)))
 
 (defun url-for-tag (name)
-  (concatenate 'string "tag/" name))
+  (if (starts-with (request-uri*) "/tag/")
+      (concatenate 'string (request-uri*) "/" name)
+      (concatenate 'string "/tag/" name)))
 
 (defun split-tags (tags &key (separator *tags-separator*))
   (split-sequence:split-sequence separator tags :remove-empty-subseqs t))
 
 (defmethod print-html ((tag tag))
-  (with-html-output-to-string (stream nil :indent t)
+  (with-html-output-to-string (stream)
     (:span :class "tag"
            (:a :href (url-for-tag (tag-name tag))
                (str (tag-name tag))))))

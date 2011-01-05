@@ -68,10 +68,11 @@
                         (str " "))
                       (range first last)))))))
 
-(defun all-links ()
-  (select 'link :flatp t :refresh t))
-
 #.(locally-enable-sql-reader-syntax)
+(defun all-links ()
+  (select 'link :flatp t :refresh t
+          :order-by '(([timestamp] :desc))))
+
 (defmethod tags ((link link))
   (mapcar #'first
           (select 'tag 'tag-join :where [and [= [slot-value 'tag-join 'link-id] (id link)]
@@ -110,7 +111,8 @@
 
 (defun user-links (user)
   (select 'link :where [= [user-id] (id user)]
-          :refresh t :flatp t))
+          :refresh t :flatp t
+          :order-by '(([timestamp] :desc))))
 
 (defun n-pages (links)
   (floor (length links) *links-per-page*))

@@ -1,0 +1,34 @@
+clinks -- Manage your bookmarks online
+
+* Introduction
+Clinks is a web app made to manage your bookmarks. It is mostly
+inspired by [[http://delicious.com][delicious]].
+* Features
+Right now, clinks includes the following features:
+  - Tag support, research by tag
+  - Editing/deleting links
+  - Import of delicious/firefox bookmarks
+  - Simple API, inspired by delicious' API
+
+Socials features like seeing each others bookmarks, suggestions
+etc. are planned.
+* Installation
+Clinks depends on the following libraries:
+  - alexandria
+  - split-sequence
+  - cl-who
+  - hunchentoot
+  - clsql
+  - ironclad
+  - drakma
+  - cl-ppcre
+
+Each of these libraries are available through [[http://www.quicklisp.org/][quicklisp]] or
+[[http://www.cliki.net/ASDF-Install][asdf-install]].
+
+To install clinks, just clone the git repository, load the system and call
+=start=. The default port is set to 8000 and the default database type
+is sqlite3[fn:sqlite].
+
+[fn:sqlite] Note that clsql's sqlite backend is bugged, it doesn't
+auto increment primary keys, see the patch [[http://lists.b9.com/pipermail/clsql/2008-August/001616.html][here]].

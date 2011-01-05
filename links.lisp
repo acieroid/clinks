@@ -40,6 +40,9 @@
           (:div :class "notes"
                 (str (notes link))))))
 
+(defmethod username ((link link))
+  (username (user link)))
+
 (defun print-links (links)
   (with-html-output-to-string (stream)
     (:ul
@@ -188,29 +191,25 @@
     (str (print-pager "links" page (n-pages links)))))
 
 
-#.(locally-enable-sql-reader-syntax)
-;; TODO: only select user's links
-;; TODO: filter url
-(defun filter-links (tags)
-  (let* ((tag-id (id (find-tag (first tags))))
-         (links (mapcar #'first
-                        (select 'link 'tag-join :where [and [= [slot-value 'tag-join 'tag-id]
-                                                                tag-id]
-                                                            [= [slot-value 'tag-join 'link-id]
-                                                               [slot-value 'link 'id]]]
-                                :refresh t))))
+(defun filter-links (&key user tags url)
+  (let ((links (all-links)))
+    (when user
+      (delete-if-not (curry #'string= (username user)) links
+                     :key (compose #'username #'user)))
+    (when url
+      (delete-if-not (curry #'string= url) links))
     ;; This is ugly as shit
     (mapcar (lambda (tag)
               (delete-if-not (lambda (link)
                                (find tag (tags link)
-                                     :test (lambda (name tag) (string= name (tag-name tag)))))
+                                     :test (lambda (name tag)
+                                             (string= name (tag-name tag)))))
                              links))
-            (rest tags))
+            tags)
     links))
-#.(disable-sql-reader-syntax)
 
 (defaction tag "Tag" (&rest tags)
-  (let* ((links (filter-links tags)))
+  (let* ((links (filter-links :user (current-user) :tags tags)))
     (htm (:ul (mapcar (lambda (x)
                         (htm (:li (str (print-html x)))))
                       links)))))

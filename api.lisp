@@ -40,7 +40,6 @@
   (htm (:response :code "done")))
 
 (defapi posts/get (tag url)
-  ;; TODO: url filtering
   (flet ((space-separated-tags (tags)
            (reduce (lambda (last tag)
                      (concatenate 'string last " " (tag-name tag)))
@@ -53,4 +52,5 @@
                              :description (title l)
                              :extended (notes l)
                              :tag (space-separated-tags (tags l)))))
-                     (filter-links (list tag)))))))
+                     (filter-links :user user :tags (split-tags tags)
+                                   :url (unless (string= url "") url)))))))

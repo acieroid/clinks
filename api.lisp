@@ -52,5 +52,5 @@
                              :description (title l)
                              :extended (notes l)
                              :tag (space-separated-tags (tags l)))))
-                     (filter-links :user user :tags (split-tags tags)
+                     (filter-links :user user :tags (split-tags tag :separator #\+)
                                    :url (unless (string= url "") url)))))))

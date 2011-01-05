@@ -16,8 +16,8 @@
 (defun url-for-tag (name)
   (concatenate 'string "tag/" name))
 
-(defun split-tags (tags)
-  (split-sequence:split-sequence *tags-separator* tags))
+(defun split-tags (tags &key (separator *tags-separator*))
+  (split-sequence:split-sequence separator tags :remove-empty-subseqs t))
 
 (defmethod print-html ((tag tag))
   (with-html-output-to-string (stream)

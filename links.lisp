@@ -24,16 +24,16 @@
     (format nil "~a-~a-~a" month date year)))
 
 (defmethod print-html ((link link))
-  (with-html-output-to-string (stream)
+  (with-html-output-to-string (stream) 
     (:div :class "link"
           (:a :href (url link)
               (str (title link)))
           " "
           (str (date link))
           " "
-          (:a :href (get-action-url "edit" (url link)) "edit") " "
-          (:a :href (get-action-url "delete" (url link))  "x")
-          :br
+          (:a :href (get-action-url "edit" (url link)) "edit")
+          " "
+          (:a :href (get-action-url "delete" (url link)) "x")
           (:div :class "tags"
                 (mapcar (lambda (tag) (htm (str (print-html tag)) " "))
                       (tags link)))
@@ -44,7 +44,7 @@
   (username (user link)))
 
 (defun print-links (links)
-  (with-html-output-to-string (stream)
+  (with-html-output-to-string (stream nil :indent t)
     (:ul
      (mapcar (lambda (x)
                (htm (:li (str (print-html x)))))
@@ -143,7 +143,7 @@
         "")))
 
 (defun link-form (page name &optional (link (make-instance 'link)))
-  (with-html-output-to-string (stream)
+  (with-html-output-to-string (stream nil :indent t)
     (:form :action page :method "post"
            (:p "URL:" (:input :type "text" :name "url" :value (url link)))
            (:p "Title: " (:input :type "text" :name "title" :value (title link))

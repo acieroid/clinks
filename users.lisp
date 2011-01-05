@@ -39,13 +39,19 @@
         (setf (session-value :user) username))
       ;; TODO: use conditions and an error page?
       (error "No such user or wrong password")))
-
 (defun user-form (page name)
   (with-html-output-to-string (stream)
     (:form :action page :method "post"
            (:p "Username: " (:input :type "text" :name "username"))
            (:p "Password: " (:input :type "password" :name "password"))
            (:p (:input :type "submit" :value (str name))))))
+
+(defun register-connect-form ()
+  (with-html-output-to-string (stream nil :indent t)
+    (:h3 "Not connected?")
+    (str (user-form "connect" "Connect"))
+    (:h3 "Not registered?")
+    (str (user-form "register" "Register"))))
 
 (defpage register "Register"
   (if (and (parameter "username") (> (length (parameter "username")) 2)

@@ -5,7 +5,7 @@
     (new-link "New link")))
 
 (defun print-menu ()
-  (with-html-output-to-string (stream)
+  (with-html-output-to-string (stream nil :indent t)
     (:div :class "menu"
           (flet ((print-link (element)
                    (let ((link (first element))
@@ -40,15 +40,14 @@
        (:link :type "text/css" :rel "stylesheet" :href "/design.css")
        (:title ,title))
       (:body
-       (:h1 ,title)
-       (str (print-menu))
+       (when (current-user) (str (print-menu)))
        ,@body))))
 
 (defmacro defpagel (name title &body body)
   `(defpage ,name ,title
      (if (current-user)
-         (progn (htm,@body))
-         (htm "You must be connected to see this page"))))
+         (progn (htm ,@body))
+         (str (register-connect-form)))))
 
 (defmacro defaction (name title args &body body)
   `(defpagel ,name ,title

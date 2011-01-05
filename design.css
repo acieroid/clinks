@@ -1,7 +1,39 @@
+body {
+    font-family: sans-serif;
+    margin-left: 15%;
+    margin-righ: 15%
+}
+
 .menu {
     text-align: center;
 }
 
 .pager {
     text-align: center;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.link {
+    border: 1px solid #AAC;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    margin: 15px;
+    padding: 5px;
+}    
+
+.tags {
+    margin-top: -15px;
+    margin-bottom: 5px;
+    text-align: right;
+}
+.tag {
+    background-color: #DDE;
+    border: 1px solid #AAC;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    padding: 5px;
+    margin: 3px;
 }

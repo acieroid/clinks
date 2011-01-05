@@ -20,7 +20,7 @@
   (split-sequence:split-sequence separator tags :remove-empty-subseqs t))
 
 (defmethod print-html ((tag tag))
-  (with-html-output-to-string (stream)
+  (with-html-output-to-string (stream nil :indent t)
     (:span :class "tag"
            (:a :href (url-for-tag (tag-name tag))
                (str (tag-name tag))))))

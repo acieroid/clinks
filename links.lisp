@@ -54,18 +54,19 @@
   (loop for i from x to y collect i))
 
 (defun print-pager (action n pages)
-  (with-html-output-to-string (stream)
-    (:div :class "pager"
-          (let* ((first (max 0 (- n (/ *pages-links-shown* 2))))
-                 (last (min (+ first *pages-links-shown*) pages)))
-            (mapcar (lambda (x)
-                      (if (= x n)
-                          (str x)
-                          (htm (:a :href  (get-action-url action
-                                                          (format nil "~a" x))
-                                   (str x))))
-                      (str " "))
-                    (range first last))))))
+  (unless (= pages 0)
+    (with-html-output-to-string (stream)
+      (:div :class "pager"
+            (let* ((first (max 0 (- n (/ *pages-links-shown* 2))))
+                   (last (min (+ first *pages-links-shown*) pages)))
+              (mapcar (lambda (x)
+                        (if (= x n)
+                            (str x)
+                            (htm (:a :href  (get-action-url action
+                                                            (format nil "~a" x))
+                                     (str x))))
+                        (str " "))
+                      (range first last)))))))
 
 (defun all-links ()
   (select 'link :flatp t :refresh t))
@@ -112,7 +113,7 @@
           :refresh t :flatp t))
 
 (defun n-pages (links)
-  (/ (length links) *links-per-page*))
+  (floor (length links) *links-per-page*))
 
 (defun links-at-page (links page)
   (let ((first-at (* page *links-per-page*))

@@ -140,7 +140,7 @@
     (declare (ignore string))
     (if results
         (aref results 0)
-        "")))
+        url)))
 
 (defun link-form (page name &optional (link (make-instance 'link)))
   (with-html-output-to-string (stream nil :indent t)

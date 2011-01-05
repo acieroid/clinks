@@ -196,17 +196,20 @@
 (defun filter-links (&key user tags url)
   (let ((links (all-links)))
     (when user
-      (delete-if-not (curry #'string= (username user)) links
-                     :key (compose #'username #'user)))
+      (setf links
+            (delete-if-not (curry #'string= (username user)) links
+                           :key (compose #'username #'user))))
     (when url
-      (delete-if-not (curry #'string= url) links))
+      (setf links
+            (delete-if-not (curry #'string= url) links)))
     ;; This is ugly as shit
     (mapcar (lambda (tag)
-              (delete-if-not (lambda (link)
-                               (find tag (tags link)
-                                     :test (lambda (name tag)
-                                             (string= name (tag-name tag)))))
-                             links))
+              (setf links
+                    (delete-if-not (lambda (link)
+                                     (find tag (tags link)
+                                           :test (lambda (name tag)
+                                                   (string= name (tag-name tag)))))
+                                   links)))
             tags)
     links))
 

@@ -37,7 +37,7 @@
      (:html
       (:head
        (:meta :http-equiv "Content-Type" :content "text/html;charset=utf-8")
-       (:link :type "text/css" :rel "stylesheet" :href *css-file*)
+       (:link :type "text/css" :rel "stylesheet" :href "/design.css")
        (:title ,title))
       (:body
        (:h1 ,title)
@@ -59,7 +59,7 @@
             `(funcall #'f (subseq (request-uri*)
                                   (1+ (position #\/ (request-uri*) :start 1))))
             `(apply #'f (cdr (split-sequence:split-sequence
-                              #\/ (request-uri*) :start 1)))))))))
+                              #\/ (request-uri*) :start 1)))))))
 
 (defun get-action-url (action arg)
   (concatenate 'string "/" action "/" arg))

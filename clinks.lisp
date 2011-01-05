@@ -1,6 +1,6 @@
 (in-package #:clinks)
 
-(defparameter *css-file* "/design.css")
+(defparameter *css-file* "design.css")
 
 ;; For debug only
 (setf *show-lisp-errors-p* t

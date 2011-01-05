@@ -51,10 +51,15 @@
          (htm "You must be connected to see this page"))))
 
 (defmacro defaction (name title args &body body)
-  `(defpage ,name ,title
+  `(defpagel ,name ,title
      (labels ((f ,args
                 ,@body))
-       (apply #'f (cdr (split-sequence:split-sequence #\/ (request-uri*) :start 1))))))
+       ,(if (length= 1 args)
+            ;; If there's only one arguments, that could be a link
+            `(funcall #'f (subseq (request-uri*)
+                                  (1+ (position #\/ (request-uri*) :start 1))))
+            `(apply #'f (cdr (split-sequence:split-sequence
+                              #\/ (request-uri*) :start 1)))))))))
 
 (defun get-action-url (action arg)
   (concatenate 'string "/" action "/" arg))

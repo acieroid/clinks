@@ -37,3 +37,16 @@ ul {
     padding: 5px;
     margin: 3px;
 }
+
+.message {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.message-content { 
+    background-color: #CCF;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    border: 1px solid #AAC;
+    padding: 10px;
+}

@@ -170,7 +170,7 @@
                  :tags (parameter "tags")
                  :notes (parameter "notes")
                  :private (string= (parameter "private") "on"))
-       (:p "Link added"))
+       (str (message "Link added")))
       (str (link-form "new-link" "Add"))))
 
 (defaction edit "Edit" (url)
@@ -181,12 +181,12 @@
                     (split-tags (parameter "tags"))
                     (parameter "notes")
                     (string= (parameter "private") "on"))
-         "Link edited")
+         (str (message "Link edited")))
         (str (link-form (request-uri*) "Edit" link)))))
 
 (defaction delete "Delete" (url)
   (delete-link url (current-user))
-  "Link deleted")
+  (str (message "Link deleted")))
 
 (defaction links "My links" (&optional (page "0"))
   (let ((links (user-links (current-user)))

@@ -63,3 +63,9 @@
 (defun get-action-url (action arg)
   (concatenate 'string "/" action "/" arg))
 
+(defun message (str)
+  (with-html-output-to-string (stream nil :indent t)
+    (:div :class "message"
+          (:span :class "message-content"
+                 (str str)))))
+

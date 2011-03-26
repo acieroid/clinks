@@ -1,0 +1,40 @@
+Clinks implementation
+* RESTful interface
+See README.
+  - Database management
+  - Classes:
+    - Link
+    - Tag
+    - User
+  - Resource definition:
+    #+BEGIN_SRC lisp
+    (defresource GET "/<user>/links" ()
+      …)
+    #+END_SRC
+  - Representation printing:
+    #+BEGIN_SRC lisp
+    (print-representation 'links (get-all-links)
+    #+END_SRC
+  - Parsing representations:
+    #+BEGIN_SRC lisp
+    (parse-representation 'link str)
+    #+END_SRC
+* Web interface
+  - Import links from delicious or firefox
+  - Fetch the page title
+* Firefox plugin
+* Chrome plugin
+Easily doable, just some HTML and Javascript
+* CLI interface
+* Lisp files
+  - rest.lisp:
+    - defresource
+    - print-representation
+    - parse-representation
+  - sql.lisp
+    - link
+    - tag
+    - user
+  - link.lisp
+  - tag.lisp
+  - user.lisp

@@ -1,34 +1,162 @@
-clinks -- Manage your bookmarks online
+clinks -- A RESTful bookmark manager
 
 * Introduction
-Clinks is a web app made to manage your bookmarks. It is mostly
-inspired by [[http://delicious.com][delicious]].
-* Features
-Right now, clinks includes the following features:
-  - Tag support, research by tag
-  - Editing/deleting links
-  - Import of delicious/firefox bookmarks
-  - Simple API, inspired by delicious' API
+Clinks is a web app made to manage your bookmarks. It is inspired by
+[[http://delicious.com][delicious]], but it focus on providing a RESTful interface to access
+your bookmarks. Browsers plugins and CLI access are planned, and maybe
+some neat web frontend like delicious' one.
 
-Socials features like seeing each others bookmarks, suggestions
-etc. are planned.
-* Installation
-Clinks depends on the following libraries:
-  - alexandria
-  - split-sequence
-  - cl-who
-  - hunchentoot
-  - clsql
-  - ironclad
-  - drakma
-  - cl-ppcre
+* Resources
+Clinks use three resources:
+  1. links
+  2. tags
+  3. users
 
-Each of these libraries are available through [[http://www.quicklisp.org/][quicklisp]] or
-[[http://www.cliki.net/ASDF-Install][asdf-install]].
+** Representations
+Every resource is represented using XML. Resource operations and
+representations are inspired from [[http://www.peej.co.uk/articles/restfully-delicious.html][this document]]. Note that
+informations stored in XML /attributes/ indicates data that is only
+given in output (that is, not needed when using =POST=, =UPDATE= or
+=DELETE= methods)
 
-To install clinks, just clone the git repository, load the system and call
-=start=. The default port is set to 8000 and the default database type
-is sqlite3[fn:sqlite].
+*** Links
+Links have the following attributes:
+  - An /url/, pointing to the page bookmarked
+  - A /title/, defaulted to the page's title
+  - A /time/, corresponding to the save time of the link, represented
+    using the [[http://tools.ietf.org/html/rfc3339][RFC3339]]
+  - Some /notes/ about the link
+  - Some /tags/
 
-[fn:sqlite] Note that clsql's sqlite backend is bugged, it doesn't
-auto increment primary keys, see the patch [[http://lists.b9.com/pipermail/clsql/2008-August/001616.html][here]].
+For example:
+#+BEGIN_SRC none
+<link>
+  <url>http://cliki.net</url>
+  <time>2011-02-27T16:57:33Z</time>
+  <title>CLiki : index</title>
+  <notes>The Common Lisp Wiki</notes>
+  <tags count="2">
+    <tag href="http://example.com/user/tags/lisp">
+      <name>lisp</name>
+    </tag>
+    <tag href="http://example.com/user/tags/cl">
+      <name>cl</name>
+    </tag>
+  </tags>
+</link>
+#+END_SRC
+
+*** Tags
+Tags just have a name, and links matching the tag:
+#+BEGIN_SRC none
+<tag>
+  <name>lisp</name>
+  <links>
+    <link href="http://example.com/user/links/7fc9683453f178773d158f69682f805456f2e7be">
+      <url>http://cliki.net</url>
+    </link>
+  </links>
+</tag>
+#+END_SRC
+
+*** Users
+#+BEGIN_SRC none
+<user>
+  <username>foo</username>
+  <password>f1d2d2f924e986ac86fdf7b36c94bcdf32beec15</password>
+  <links>
+    <link href="http://example.com/foo/links/7fc9683453f178773d158f69682f805456f2e7be">
+      <url>http://cliki.net</url>
+    </link>
+  </links>
+</user>
+#+END_SRC
+Note that the password field won't be revealed by the server when
+accessing an user information. It only should be given as input when
+creating or modifying an user.
+** Operations
+Every link and tag URI should be preceded by the username, for
+example, if you want to access the tag =foo= of the user =bar=, the
+URI would be =/bar/tags/foo=.
+*** Links
+**** Get the list of the links
+  - /URI/: =/links=
+  - /Method/: =GET=
+  - /Return codes/:
+    - 200 and a list of links representation if everything went fine
+**** Get informations about a link
+  - /URI/: =/links/<hash>=, where =<hash>= is in fact the =sha1sum= of
+    the link's URL
+  - /Method/: =GET=
+  - /Return codes/:
+    - 200 and a link representation if everything went fine
+    - 404 if there's no link corresponding to =<hash>=
+**** Add a link
+  - /URI/: =/links=
+  - /Method/: =POST=
+  - /Input/: A link representation
+  - /Return codes/:
+    - 201 and the link URI
+    - 401 if the user is trying to add a link to another user's account
+    - 415 if the representation isn't parsable
+**** Modify a link
+  - /URI/: =/links/<hash>=
+  - /Method/: =PUT=
+  - /Input/: A link representation
+  - /Return codes/:
+    - 201 and the link URI
+    - 401 if the user is trying to modify a link of another user
+    - 404 if the link doesn't exists
+    - 415 if the representation isn't parsable
+**** Delete a link
+  - /URI/: =/links/<hash>=
+  - /Method/: =DELETE=
+  - /Return codes/:
+    - 204 in case of success
+    - 401 if the user is trying to delete a link of another user
+    - 404 if the link doesn't exists
+*** Tags
+**** Get informations about a tag
+  - /URI/: =/tags/<name>= where =<name>= is the name of the tag
+  - /Method/: =GET=
+  - /Return codes/:
+    - 200 and a tag representation in case of success
+    - 404 if the tag doesn't exists
+**** Rename a tag
+  - /URI/: =/tags/<name>=
+  - /Method/: =PUT=
+  - /Return codes/:
+    - 204 and the new tag's URI
+    - 401 if the user is trying to rename another user's tag
+    - 404 if the tag doesn't exists
+**** Delete a tag
+  - /URI/: =/tags/<name>=
+  - /Method/: =DELETE=
+  - /Return codes/:
+    - 204 in case of success
+    - 401 if the user is trying to delete another use's tag
+    - 404 if the tag doesn't exists
+*** Users
+**** Create a new user
+  - /URI/: =/users=
+  - /Method/: =POST=
+  - /Input/: an user representation
+  - /Return codes/:
+    - 201 and the user's URI in case of success
+    - 401 if the user already exists
+    - 415 if the user representation isn't parsable
+**** Modify an user
+  - /URI/: =/users/<username>=
+  - /Method/: =UPDATE=
+  - /Input/: an user representation
+  - /Return codes/:
+    - 201 and the bookmark's URI in case of success
+    - 401 if the user is trying to change his username to an already
+      existing username or is trying to modify another user than himself
+    - 415 if the user representation isn't parsable
+**** Delete an user
+  - /URI/: =/users/<username>=
+  - /Method/: =DELETE=
+  - /Return codes/:
+    - 204 in case of success
+    - 401 if the user is trying to delete another user than himself

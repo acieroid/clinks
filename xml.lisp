@@ -10,18 +10,23 @@
                                      attributes))))
         (t (values attributes args))))
 
-(defun xml-elem (tag &rest args)
-  (multiple-value-bind (attributes content) (split-attributes args)
-    (with-output-to-string (stream)
-      (format stream "<~a" tag)
-      (when attributes
-        (princ " " stream))
-      (mapcar (lambda (x)
-                (format stream "~a=\"~a\""
-                        (string-downcase (symbol-name (car x)))
-                        (cdr x)))
-              attributes)
-      (format stream ">~%~{~a~%~}</~a>" content tag))))
+(defun << (tag &rest args)
+  (flet ((stringify (x)
+           (string-downcase (symbol-name x))))
+    (multiple-value-bind (attributes content) (split-attributes args)
+      (with-output-to-string (stream)
+        (format stream "<~a" (stringify tag))
+        (when attributes
+          (princ " " stream))
+        (mapcar (lambda (x)
+                  (format stream "~a=\"~a\""
+                          (stringify (car x))
+                          (cdr x)))
+                attributes)
+        (format stream ">~%~{~a~%~}</~a>" content (stringify tag))))))
 
-(defmacro << (tag &rest args)
-  `(xml-elem ,(string-downcase (symbol-name tag)) ,@args))
+(defun <<iter (fun list)
+  ;; TODO: might be inefficient with large input, maybe use a stream
+  ;; and print directly to it
+  (reduce (lambda (last el) (concatenate 'string last (funcall fun el))) list
+          :initial-value ""))

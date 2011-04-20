@@ -17,3 +17,10 @@
   (:documentation "Return the link to OBJECT's representation")
   (:method (object)
     (format nil "~a/~a" (class-name (class-of object)) (id object))))
+
+(def-view-class data ()
+  ((id :type integer :db-kind :key :initform nil :reader id)
+   (timestamp :type integer :accessor timestamp :initform 0)))
+
+(defmethod initialize-instance :after ((data data) &key &allow-other-keys)
+  (setf (timestamp data) (now)))

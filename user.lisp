@@ -1,16 +1,13 @@
 (in-package :clinks)
 
-(def-view-class user ()
-  ((id :type integer :db-kind :key :initform nil :reader id)
-   (username :type string :accessor username :initform "" :initarg :username)
-   (password :type string :accessor password :initform "" :initarg :password)
-   (timestamp :type integer :accessor timestamp :initform 0 :initarg :timestamp)))
+(def-view-class user (data)
+  ((username :type string :accessor username :initform "" :initarg :username)
+   (password :type string :accessor password :initform "" :initarg :password)))
 
 (defun make-user (username password)
   (make-instance 'user
                  :username username
-                 :password (hash password)
-                 :timestamp (now)))
+                 :password (hash password)))
 
 ;;; Conditions
 (define-condition user-error ()

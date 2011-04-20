@@ -2,17 +2,13 @@
 
 (asdf:defsystem #:clinks
   :serial t
-  :depends-on ("alexandria" "split-sequence"
-               "hunchentoot" "cl-who"
-               "clsql" "clsql-sqlite3"
-               "ironclad" "drakma" "cl-ppcre")
+  :depends-on ("alexandria" "split-sequence" "local-time"
+               "hunchentoot" "clsql" "clsql-sqlite3"
+               "ironclad")
   :components ((:file "package")
-               (:file "clinks")
-               (:file "pages")
-               (:file "users")
-               (:file "tags")
-               (:file "links")
-               (:file "api")
-               (:file "parser")
-               (:file "import")))
+               (:file "xml")
+               (:file "utils")
+               (:file "data")
+               (:file "user")
+               (:file "link")))
 

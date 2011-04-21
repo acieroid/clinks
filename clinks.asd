@@ -8,6 +8,7 @@
   :components ((:file "package")
                (:file "xml")
                (:file "utils")
+               (:file "resources")
                (:file "data")
                (:file "user")
                (:file "link")))

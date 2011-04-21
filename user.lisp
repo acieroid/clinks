@@ -37,8 +37,8 @@
 
 ;;; Representations
 (defmethod print-representation ((type (eql 'user)) user)
-  (<< 'user
-   (<< 'username (username user))
-   (<< 'time (rfc3339 user))
-   (print-representation 'links (get-user-links user))))
+  (xml (<> 'user
+           (<> 'username (username user))
+           (<> 'time (rfc3339 user))
+           (print-representation 'links (get-user-links user)))))
 

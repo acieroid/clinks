@@ -1,5 +1,7 @@
 (in-package :clinks)
 
+(defparameter *tab-width* 2)
+
 (defun split-attributes (args &optional attributes)
   (cond ((null args) (values attributes nil))
         ((keywordp (car args))
@@ -10,23 +12,36 @@
                                      attributes))))
         (t (values attributes args))))
 
-(defun << (tag &rest args)
-  (flet ((stringify (x)
-           (string-downcase (symbol-name x))))
-    (multiple-value-bind (attributes content) (split-attributes args)
-      (with-output-to-string (stream)
-        (format stream "<~a" (stringify tag))
-        (when attributes
-          (princ " " stream))
-        (mapcar (lambda (x)
-                  (format stream "~a=\"~a\""
-                          (stringify (car x))
-                          (cdr x)))
-                attributes)
-        (format stream ">~%~{~a~%~}</~a>" content (stringify tag))))))
+(defun indent (stream n)
+  (dotimes (i n)
+    (write-char #\Space stream)))
 
-(defun <<iter (fun list)
-  ;; TODO: might be inefficient with large input, maybe use a stream
-  ;; and print directly to it
-  (reduce (lambda (last el) (concatenate 'string last (funcall fun el))) list
-          :initial-value ""))
+(defun print-element (element stream indentation)
+  (if (functionp element)
+      (funcall element stream (+ indentation *tab-width*))
+      (progn
+        (indent stream (+ indentation *tab-width*))
+        (princ element stream)))
+  (terpri stream))
+
+(defun <> (tag &rest args)
+  (multiple-value-bind (attributes content) (split-attributes args)
+    (lambda (stream n)
+      (indent stream n)
+      (format stream "<~(~a~)" tag)
+      (dolist (attr attributes)
+        (format stream " ~(~a~)=\"~a\"" (car attr) (cdr attr)))
+      (write-char #\> stream)
+      (terpri stream)
+      (mapcar (lambda (el) (print-element el stream n)) content)
+      (indent stream n)
+      (format stream "</~(~a~)>" tag))))
+
+(defun xml (fun)
+  (with-output-to-string (stream)
+    (funcall fun stream 0)))
+
+(defun <>iter (fun list)
+  (lambda (stream n)
+    (mapcar (lambda (el) (print-element (funcall fun el) stream n))
+            list)))

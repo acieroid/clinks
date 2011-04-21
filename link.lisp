@@ -17,19 +17,17 @@
 
 ;;;; Representation
 (defmethod print-representation ((type (eql 'link)) link)
-  (<< 'link
-   (<< 'url (url link))
-   (<< 'time (rfc3339 link))
-   (<< 'title (title link))
-   (<< 'notes (notes link))
-   (print-representation 'tags (tag-string link))))
+  (xml (<> 'link
+           (<> 'url (url link))
+           (<> 'time (rfc3339 link))
+           (<> 'title (title link))
+           (<> 'notes (notes link))
+           (print-representation 'tags (tag-string link)))))
 
 (defmethod print-representation ((type (eql 'links)) links)
-  (<< 'links
-   (<<iter
-    (lambda (link)
-      (<< 'link
-          :href (get-href link)
-          (<< 'url (url link))))
-    links)))
+  (xml (<> 'links
+           (<>iter (lambda (link)
+                     (<> 'link :href (get-href link)
+                         (<> 'url (url link))))
+                   links))))
 

@@ -43,6 +43,29 @@
   (:method (object)
     (format nil "~a/~a" (class-name (class-of object)) (id object))))
 
+(defun parse-fields (spec class string)
+  (let ((instance (make-instance class))
+        (current-field nil))
+    (flet ((new-element (name attributes seed)
+             (declare (ignore attributes))
+             (setf current-field (intern (string-upcase (symbol-name name))))
+             seed)
+           (text (string seed)
+             (let ((element (assoc current-field spec)))
+               (if element
+                   (if (ppcre:scan (second element) string)
+                       (setf (slot-value instance current-field)
+                             (funcall (third element) string))
+                       (error 'forbidden-characters :field current-field))
+                   (error 'unknown-field :field current-field)))
+             seed))
+      (with-input-from-string (stream string)
+        (s-xml:start-parse-xml stream
+                               (make-instance 's-xml:xml-parser-state
+                                              :new-element-hook #'new-element
+                                              :text-hook #'text))))
+    instance))
+
 ;;; Parent class of all data's classes
 (def-view-class data ()
   ((id :type integer :db-kind :key :initform nil :reader id)

@@ -1,15 +1,5 @@
 (in-package :clinks)
 
-(define-condition parse-error ()
-  ((reason :initarg :reason :reader reason)
-   (field :initarg :field :reader field)))
-
-(define-condition unknown-field (parse-error)
-  ((reason :initform "Unknown field")))
-
-(define-condition forbidden-characters (parse-error)
-  ((reason :initform "Forbidden characters")))
-
 (defun create-rest-dispatcher (method regex handler)
   (let ((scanner (ppcre:create-scanner regex)))
     (lambda (request)

@@ -4,7 +4,7 @@
   :serial t
   :depends-on ("alexandria" "split-sequence" "local-time"
                "hunchentoot" "clsql" "clsql-sqlite3"
-               "ironclad")
+               "ironclad" "s-xml")
   :components ((:file "package")
                (:file "xml")
                (:file "utils")

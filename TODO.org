@@ -2,20 +2,20 @@ Clinks implementation
 * RESTful interface
 See README.
   - Database management
-  - Classes:
+  - [X] Classes:
     - Link
     - Tag
     - User
-  - Resource definition:
+  - [X] Resource definition:
     #+BEGIN_SRC lisp
     (defresource GET "/<user>/links" ()
       …)
     #+END_SRC
-  - Representation printing:
+  - [X] Representation printing:
     #+BEGIN_SRC lisp
     (print-representation 'links (get-all-links)
     #+END_SRC
-  - Parsing representations:
+  - [X] Parsing representations:
     #+BEGIN_SRC lisp
     (parse-representation 'link str)
     #+END_SRC
@@ -26,15 +26,3 @@ See README.
 * Chrome plugin
 Easily doable, just some HTML and Javascript
 * CLI interface
-* Lisp files
-  - rest.lisp:
-    - defresource
-    - print-representation
-    - parse-representation
-  - sql.lisp
-    - link
-    - tag
-    - user
-  - link.lisp
-  - tag.lisp
-  - user.lisp

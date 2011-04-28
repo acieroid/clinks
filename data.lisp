@@ -60,10 +60,13 @@
                    (error 'unknown-field :field current-field)))
              seed))
       (with-input-from-string (stream string)
-        (s-xml:start-parse-xml stream
-                               (make-instance 's-xml:xml-parser-state
-                                              :new-element-hook #'new-element
-                                              :text-hook #'text))))
+        ;;; We have to bind *package* to avoid having symbol interned
+        ;;; in the wrong package by s-xml
+        (let ((*package* (find-package :clinks)))
+          (s-xml:start-parse-xml stream
+                                 (make-instance 's-xml:xml-parser-state
+                                                :new-element-hook #'new-element
+                                                :text-hook #'text)))))
     instance))
 
 ;;; Parent class of all data's classes

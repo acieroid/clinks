@@ -11,5 +11,6 @@
                (:file "resources")
                (:file "data")
                (:file "user")
-               (:file "link")))
+               (:file "link")
+               (:file "clinks")))
 

@@ -47,7 +47,7 @@
     ;; facilities to handle errors
     (parse-representation-error (e)
       (setf (return-code*) 415)
-      (format nil "Parse error on field ~a: ~a" (field e) (reason e)))
+      (princ e))
     (user-already-exists (e)
       (setf (return-code*) 401)
-      (format nil "User already exists: ~a" (username e)))))
+      (princ e))))

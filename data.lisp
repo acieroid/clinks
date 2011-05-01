@@ -1,9 +1,16 @@
 (in-package :clinks)
 
 ;;; Conditions
-(define-condition parse-representation-error ()
+(define-condition clinks-error ()
+  (:documentation "Parent class of every clinks related error"))
+
+(define-condition parse-representation-error (clinks-error)
+  (:documentation "Error when parsing the representation of an object")
   ((reason :initarg :reason :reader reason)
    (field :initarg :field :reader field)))
+
+(defmethod print-object ((e parse-representation-error) stream)
+  (format stream "Parse error on field '~a': ~a" (field e) (reason e)))
 
 (define-condition unknown-field (parse-representation-error)
   ((reason :initform "Unknown field")))
@@ -11,9 +18,13 @@
 (define-condition forbidden-characters (parse-representation-error)
   ((reason :initform "Forbidden characters")))
 
-(define-condition user-error ()
+(define-condition user-error (clinks-error)
+  (:documentation "Error related with user management")
   ((username :initarg :username :reader username)
    (reason :initarg :reason :reader reason)))
+
+(defmethod print-object ((e user-error) stream)
+  (format stream "Error with user '~a': ~a" (username e) (reason e)))
 
 (define-condition user-dont-exists (user-error)
   ((reason :initform "User don't exists")))

@@ -39,15 +39,6 @@
 
 ;;; Resources
 (defresource :POST "^/users/?$" ()
-  (handler-case
-      (let ((user (parse-representation 'user
-                                        (post-parameter "input"))))
-        (add-user user))
-    ;; TODO: move error handling somewhere else or use hunchentoot's
-    ;; facilities to handle errors
-    (parse-representation-error (e)
-      (setf (return-code*) 415)
-      (princ e))
-    (user-already-exists (e)
-      (setf (return-code*) 401)
-      (princ e))))
+  (let ((user (parse-representation 'user
+                                    (post-parameter "input"))))
+    (add-user user)))

@@ -17,5 +17,10 @@
                          (ppcre:scan-to-strings ,regex (script-name*))))
                 'list)
               (setf (hunchentoot:content-type*) "text/xml")
-             ,@body)))
+              (handler-case
+                  (progn
+                    ,@body)
+                (clinks-error (e)
+                  (setf (return-code*) (code e))
+                  (princ e))))))
         hunchentoot:*dispatch-table*))

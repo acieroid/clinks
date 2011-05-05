@@ -13,10 +13,11 @@
   (:documentation "Merge two instances of a class")
   (:method (new old)
     (assert (eql (class-of new) (class-of old)))
+    (log-message 'debug "Merging ~a and ~a" new old)
     (mapcar
      (lambda (slot)
        (let ((slot-name (closer-mop:slot-definition-name slot)))
          (when (slot-boundp new slot-name)
            (setf (slot-value old slot-name) (slot-value new slot-name)))))
-     (closer-mop:class-direct-slots new))
+     (closer-mop:class-direct-slots (class-of new)))
     old))

@@ -62,13 +62,15 @@
       (error 'user-dont-exists))
     (print-representation 'user user)))
 
-(defresource :UPDATE "^/users/([a-zA-Z0-9]+)/?$" (username)
+;; TODO: UPDATE method doesn't seem to take any parameters
+(defresource :POST "^/users/([a-zA-Z0-9]+)/?$" (username)
+  (log-message 'debug "Update user: ~a, input: ~a" username (post-parameter "input"))
   (let ((new-user (parse-representation 'user
                                         (post-parameter "input")))
         (old-user (find-user username)))
     (when (not old-user)
       (error 'user-dont-exists))
-    (update-records-from-instance (merge-instances old-user new-user))
+    (update-records-from-instance (merge-instances new-user old-user))
     (setf (return-code*) 201)))
 
 (defresource :DELETE "^/users/([a-zA-Z0-9]+)/?$" (username)

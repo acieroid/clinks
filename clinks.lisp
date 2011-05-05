@@ -1,5 +1,10 @@
 (in-package :clinks)
 
+(setf *handle-http-errors-p* nil
+      *message-log-pathname* #p"/tmp/clinks.log"
+      *hunchentoot-default-external-format* :utf-8
+      *default-content-type* "text/xml; charset=utf-8")
+
 (defun find-db (name)
   (find-if (lambda (db)
              (string= (database-name db) name))
@@ -20,9 +25,5 @@
   (create-tables 'user 'link))
 
 (defun start (&optional (port 8080) (db-specs '("clinks.db")) (db-type :sqlite3))
-  (let ((*handle-http-errors-p* nil)
-        (*message-log-pathname* #p"/var/log/clinks.log")
-        (*hunchentoot-default-external-format* :utf-8)
-        (*default-content-type* "text/xml; charset=utf-8"))
-    (start-databases db-specs db-type)
-    (hunchentoot:start (make-instance 'acceptor :port port))))
+  (start-databases db-specs db-type)
+  (hunchentoot:start (make-instance 'acceptor :port port)))

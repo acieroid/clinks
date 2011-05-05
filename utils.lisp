@@ -1,5 +1,6 @@
 (in-package :clinks)
 
+;; TODO: add a salt
 (defun hash (text &optional (method :sha256))
   (ironclad:byte-array-to-hex-string
    (ironclad:digest-sequence method

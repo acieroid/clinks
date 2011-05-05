@@ -19,8 +19,9 @@
               (setf (hunchentoot:content-type*) "text/xml")
               (handler-case
                   (progn
-                    ,@body)
+                    ,@body
+                    "Action performed with success")
                 (clinks-error (e)
                   (setf (return-code*) (code e))
-                  (princ e))))))
+                  (format nil "~a" e))))))
         hunchentoot:*dispatch-table*))

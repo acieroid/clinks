@@ -19,8 +19,10 @@
               (setf (hunchentoot:content-type*) "text/xml")
               (handler-case
                   (progn
-                    ,@body
-                    (format nil "Action performed with success~%"))
+                    (let ((result (progn ,@body)))
+                      (if (stringp result)
+                          result
+                          (format nil "Action performed with success~%"))))
                 (clinks-error (e)
                   (setf (return-code*) (code e))
                   (format nil "~a~%" e))))))

@@ -9,3 +9,14 @@
 (defun now ()
   (local-time:timestamp-to-unix (local-time:now)))
 
+(defgeneric merge-instances (new old)
+  (:documentation "Merge two instances of a class")
+  (:method (new old)
+    (assert (eql (class-of new) (class-of old)))
+    (mapcar
+     (lambda (slot)
+       (let ((slot-name (closer-mop:slot-definition-name slot)))
+         (when (slot-boundp new slot-name)
+           (setf (slot-value old slot-name) (slot-value new slot-name)))))
+     (closer-mop:class-direct-slots new))
+    old))

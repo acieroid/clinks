@@ -25,6 +25,9 @@
   (first (select 'user :where [= [username] username]
                  :refresh t :flatp t)))
 
+(defun get-all-users ()
+  (select 'user :refresh t :flatp t))
+
 (defun get-user-links (user)
   nil)
 #.(restore-sql-reader-syntax-state)
@@ -43,16 +46,29 @@
                 string))
 
 ;;; Resources
+;; TODO
+;;(defresource :GET "^/users/?$" ()
+;;  (print-representation 'users (get-all-users)))
+
 (defresource :POST "^/users/?$" ()
   (let ((user (parse-representation 'user
                                     (post-parameter "input"))))
     (add-user user)
     (setf (return-code*) 201)))
 
+(defresource :GET "^/users/([a-zA-Z0-9]+)/?$" (username)
+  (let ((user (find-user username)))
+    (when (not user)
+      (error 'user-dont-exists))
+    (print-representation 'user user)))
+
 (defresource :UPDATE "^/users/([a-zA-Z0-9]+)/?$" (username)
-  (let ((user (parse-representation 'user
-                                    (post-parameter "input"))))
-    ;; TODO: merge with existing user
+  (let ((new-user (parse-representation 'user
+                                        (post-parameter "input")))
+        (old-user (find-user username)))
+    (when (not old-user)
+      (error 'user-dont-exists))
+    (update-records-from-instance (merge-instances old-user new-user))
     (setf (return-code*) 201)))
 
 (defresource :DELETE "^/users/([a-zA-Z0-9]+)/?$" (username)

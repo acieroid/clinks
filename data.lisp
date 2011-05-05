@@ -48,9 +48,20 @@
                                                 :text-hook #'text)))))
     instance))
 
+;;; Patch clsql (TODO: fill that bug in the mailing list)
+(in-package :clsql-sys)
+(defmethod database-get-type-specifier ((type (eql 'integer))
+                                        args database
+                                        (db-type (eql :sqlite3)))
+  (declare (ignore database))
+  (if args
+      (format nil "INTEGER(~A)" (car args))
+      "INTEGER"))
+(in-package :clinks)
+
 ;;; Parent class of all data's classes
 (def-view-class data ()
-  ((id :type integer :db-kind :key :initform nil :reader id)
+  ((id :type integer :db-kind :key :db-constraints :not-null :reader id :initform nil)
    (timestamp :type integer :accessor timestamp :initform 0)))
 
 (defmethod initialize-instance :after ((data data) &key &allow-other-keys)

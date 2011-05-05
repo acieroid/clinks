@@ -20,8 +20,8 @@
               (handler-case
                   (progn
                     ,@body
-                    "Action performed with success")
+                    (format nil "Action performed with success~%"))
                 (clinks-error (e)
                   (setf (return-code*) (code e))
-                  (format nil "~a" e))))))
+                  (format nil "~a~%" e))))))
         hunchentoot:*dispatch-table*))

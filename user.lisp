@@ -18,7 +18,7 @@
 
 (defmethod delete-user ((user user))
   (log-message 'debug "Deleting user: ~a" (username user))
-  (log-message 'debug "delete-intsance-records returns: ~a" (delete-instance-records user)))
+  (delete-instance-records user))
 
 #.(locally-enable-sql-reader-syntax)
 (defun find-user (username)

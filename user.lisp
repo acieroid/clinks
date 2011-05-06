@@ -9,6 +9,9 @@
                  :username username
                  :password (hash password)))
 
+(defmethod get-href ((user user))
+  (format nil "/users/~a/" (username user)))
+
 ;;; Database manipulation
 (defmethod add-user ((user user))
   (when (find-user (username user))
@@ -39,6 +42,12 @@
            (<> 'time (rfc3339 user))
            (print-representation 'links (get-user-links user)))))
 
+(defmethod print-representation ((type (eql 'users)) users)
+  (xml (<> 'users
+           (<>iter (lambda (user)
+                     (<> 'user :href (get-href user)))
+                   users))))
+
 (defmethod parse-representation ((type (eql 'user)) string)
   (parse-fields `((username "^[a-zA-Z0-9]+$" ,#'identity)
                   (password "^[a-zA-Z0-9]+$" ,#'hash))
@@ -46,9 +55,8 @@
                 string))
 
 ;;; Resources
-;; TODO
-;;(defresource :GET "^/users/?$" ()
-;;  (print-representation 'users (get-all-users)))
+(defresource :GET "^/users/?$" ()
+  (print-representation 'users (get-all-users)))
 
 (defresource :POST "^/users/?$" ()
   (let ((user (parse-representation 'user

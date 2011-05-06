@@ -3,7 +3,7 @@
 (asdf:defsystem #:clinks
   :serial t
   :depends-on ("alexandria" "split-sequence" "local-time"
-               "hunchentoot" "clsql" "clsql-sqlite3"
+               "hunchentoot" "clsql" "clsql-sqlite3" "closer-mop"
                "ironclad" "s-xml")
   :components ((:file "package")
                (:file "xml")

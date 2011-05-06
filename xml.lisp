@@ -37,8 +37,8 @@
             (terpri stream)
             (mapcar (lambda (el) (print-element el stream n)) content)
             (indent stream n)
-            (format stream "</~(~a~)>" tag))
-          (format stream "/>")))))
+            (format stream "</~(~a~)>~%" tag))
+          (format stream "/>~%")))))
 
 (defun xml (fun)
   (with-output-to-string (stream)

@@ -137,6 +137,14 @@ URI would be =/bar/tags/foo=.
     - 401 if the user is trying to delete another use's tag
     - 404 if the tag doesn't exists
 *** Users
+**** Get the user list
+  - /URI/: =/users=
+  - /Method/: =GET=
+  - /Output/: an user list representation
+**** Get Informations about an user
+  - /URI/: =/users/<username>=
+  - /Method/: =GET=
+  - /Output/ an user representation
 **** Create a new user
   - /URI/: =/users=
   - /Method/: =POST=
@@ -147,7 +155,7 @@ URI would be =/bar/tags/foo=.
     - 415 if the user representation isn't parsable
 **** Modify an user
   - /URI/: =/users/<username>=
-  - /Method/: =UPDATE=
+  - /Method/: =UPDATE= (implemented as =POST= for the moment)
   - /Input/: an user representation
   - /Return codes/:
     - 201 and the bookmark's URI in case of success

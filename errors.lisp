@@ -46,3 +46,6 @@
   ((reason :initform "Not logged")
    (username :initform "")))
 
+(defmethod print-object ((e not-logged) stream)
+  (format stream "~a" (reason e)))
+

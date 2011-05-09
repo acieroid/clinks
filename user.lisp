@@ -78,16 +78,11 @@
     (print-representation 'user user)))
 
 ;; TODO: UPDATE method doesn't seem to take any parameters
-(defresource-logged user :POST "^/users/([a-zA-Z0-9]+)/?$" (username)
-  (let ((new-user (parse-representation 'user
-                                        (post-parameter "input"))))
-    (unless (string= (username user) username)
-      (error 'not-your-user :username username))
+(defresource-logged user :POST "/?$" ()
+  (let ((new-user (parse-representation 'user (post-parameter "input"))))
     (update-records-from-instance (merge-instances new-user user))
     (setf (return-code*) 201)))
 
-(defresource-logged user :DELETE "^/users/([a-zA-Z0-9]+)/?$" (username)
-  (unless (string= (username user) username)
-    (error 'not-your-user :username username))
+(defresource-logged user :DELETE "/?$" ()
   (delete-user user)
   (setf (return-code*) 204))

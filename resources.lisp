@@ -29,13 +29,18 @@
         hunchentoot:*dispatch-table*))
 
 (defmacro defresource-logged (user method regex variables &body body)
-  (let ((username (gensym "user"))
+  (let ((auth-username (gensym "auth-username")) ; authentification username
+        (req-username (gensym "req-username")) ; requested username
         (password (gensym "password")))
-    `(defresource ,method ,regex ,variables
-       (multiple-value-bind (,username ,password) (authorization)
-         (unless ,username
+    `(defresource ,method
+         ,(concatenate 'string "^/users/([a-zA-Z0-9]+)" regex)
+         ,(cons req-username variables)
+       (multiple-value-bind (,auth-username ,password) (authorization)
+         (unless ,auth-username
            (error 'not-logged))
-         (if (good-password-p ,username ,password)
-             (let ((,user (find-user ,username)))
+         (if (good-password-p ,auth-username ,password)
+             (let ((,user (find-user ,auth-username)))
+               (unless (string= ,auth-username ,req-username)
+                 (error 'not-your-user :username ,req-username))
                ,@body)
-             (error 'wrong-password :username ,username))))))
+             (error 'wrong-password :username ,req-username))))))

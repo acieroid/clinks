@@ -21,11 +21,16 @@
 (defmethod get-href ((link link))
   (format nil "/users/~a/links/~a" (username (user link)) (url link)))
 
+;;; Database manipulation
+(defmethod add-link ((link link))
+  (log-message 'info "Adding link '~a'" (url link))
+  (update-records-from-instance link))
+
 ;;; Representation
 (defmethod print-representation ((type (eql 'link)) link)
   (xml (<> 'link
            (<> 'url (url link))
-           (<> 'time (rfc3339 link))
+           (<> 'timestamp (rfc3339 link))
            (<> 'title (title link))
            (<> 'notes (notes link))
            (print-representation 'tags (tag-string link)))))
@@ -37,9 +42,27 @@
                          (<> 'url (url link))))
                    links))))
 
+(defmethod parse-representation ((type (eql 'link)) string)
+  (parse-fields `((url "^[^<>]+$" ,#'identity)
+                  (title "^[^<>]+$" ,#'identity)
+                  (notes "^[^<>]+$" ,#'identity)
+                  (tags "^[^<>]+$" ,#'identity))
+                'link
+                string))
+
 ;;; Resources
 (defresource :GET "^/users/([a-zA-Z0-9]+)/links/?$" (username)
   (let ((user (find-user username)))
     (when (not user)
       (error 'user-dont-exists :username username))
     (print-representation 'links (get-links user))))
+
+(defresource :POST "^/users/([a-zA-Z0-9]+)/links/?$" (username)
+  (let ((user (find-user username)))
+    (when (not user)
+      (error 'user-dont-exists :username username))
+    (let ((link (parse-representation 'link
+                                      (post-parameter "input"))))
+      (setf (user-id link) (id user))
+      (add-link link)
+      (setf (return-code*) 201))))

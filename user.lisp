@@ -31,9 +31,16 @@
 (defun get-all-users ()
   (select 'user :refresh t :flatp t))
 
+;; TODO
 (defun get-user-links (user)
   nil)
 #.(restore-sql-reader-syntax-state)
+
+(defun good-password-p (username password)
+  (let ((user (find-user username)))
+    (if user
+        (string= (password user) (hash password))
+        (error 'user-dont-exists :username username))))
 
 ;;; Representations
 (defmethod print-representation ((type (eql 'user)) user)
@@ -67,23 +74,20 @@
 (defresource :GET "^/users/([a-zA-Z0-9]+)/?$" (username)
   (let ((user (find-user username)))
     (when (not user)
-      (error 'user-dont-exists))
+      (error 'user-dont-exists :username username))
     (print-representation 'user user)))
 
 ;; TODO: UPDATE method doesn't seem to take any parameters
-(defresource :POST "^/users/([a-zA-Z0-9]+)/?$" (username)
-  (log-message 'debug "Update user: ~a, input: ~a" username (post-parameter "input"))
+(defresource-logged user :POST "^/users/([a-zA-Z0-9]+)/?$" (username)
   (let ((new-user (parse-representation 'user
-                                        (post-parameter "input")))
-        (old-user (find-user username)))
-    (when (not old-user)
-      (error 'user-dont-exists))
-    (update-records-from-instance (merge-instances new-user old-user))
+                                        (post-parameter "input"))))
+    (unless (string= (username user) username)
+      (error 'not-your-user :username username))
+    (update-records-from-instance (merge-instances new-user user))
     (setf (return-code*) 201)))
 
-(defresource :DELETE "^/users/([a-zA-Z0-9]+)/?$" (username)
-  (let ((user (find-user username)))
-    (when (not user)
-      (error 'user-dont-exists))
-    (delete-user user)
-    (setf (return-code*) 204)))
+(defresource-logged user :DELETE "^/users/([a-zA-Z0-9]+)/?$" (username)
+  (unless (string= (username user) username)
+    (error 'not-your-user :username username))
+  (delete-user user)
+  (setf (return-code*) 204))

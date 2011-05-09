@@ -36,3 +36,13 @@
 (define-condition user-already-exists (user-error)
   ((reason :initform "User already exists")))
 
+(define-condition wrong-password (user-error)
+  ((reason :initform "Wrong password")))
+
+(define-condition not-your-user (user-error)
+  ((reason :initform "Not your user")))
+
+(define-condition not-logged (user-error)
+  ((reason :initform "Not logged")
+   (username :initform "")))
+

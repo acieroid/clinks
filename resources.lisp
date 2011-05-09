@@ -27,3 +27,15 @@
                   (setf (return-code*) (code e))
                   (format nil "~a~%" e))))))
         hunchentoot:*dispatch-table*))
+
+(defmacro defresource-logged (user method regex variables &body body)
+  (let ((username (gensym "user"))
+        (password (gensym "password")))
+    `(defresource ,method ,regex ,variables
+       (multiple-value-bind (,username ,password) (authorization)
+         (unless ,username
+           (error 'not-logged))
+         (if (good-password-p ,username ,password)
+             (let ((,user (find-user ,username)))
+               ,@body)
+             (error 'wrong-password :username ,username))))))

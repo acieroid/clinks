@@ -62,27 +62,32 @@
                 string))
 
 ;;; Resources
+;; Get the list of users
 (defresource :GET "^/users/?$" ()
   (print-representation 'users (get-all-users)))
 
+;; Add an user
 (defresource :POST "^/users/?$" ()
   (let ((user (parse-representation 'user
                                     (post-parameter "input"))))
     (add-user user)
     (setf (return-code*) 201)))
 
+;; Get informations about an user
 (defresource :GET "^/users/([a-zA-Z0-9]+)/?$" (username)
   (let ((user (find-user username)))
     (when (not user)
       (error 'user-dont-exists :username username))
     (print-representation 'user user)))
 
+;; Modify an user
 ;; TODO: UPDATE method doesn't seem to take any parameters
 (defresource-logged user :POST "/?$" ()
   (let ((new-user (parse-representation 'user (post-parameter "input"))))
     (update-records-from-instance (merge-instances new-user user))
     (setf (return-code*) 201)))
 
+;; Delete an user
 (defresource-logged user :DELETE "/?$" ()
   (delete-user user)
   (setf (return-code*) 204))

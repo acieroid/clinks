@@ -79,6 +79,8 @@ Every link and tag URI should be preceded by the username, for
 example, if you want to access the tag =foo= of the user =bar=, the
 URI would be =/bar/tags/foo=.
 *** Links
+Every link resource are prefixed with =/users/<username>= and will
+return =401= if the user =<username>= doesn't exists.
 **** Get the list of the links
   - /URI/: =/links=
   - /Method/: =GET=

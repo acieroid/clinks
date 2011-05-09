@@ -7,7 +7,7 @@
 (defun make-user (username password)
   (make-instance 'user
                  :username username
-                 :password (hash password)))
+                 :password (hash password :salt username)))
 
 (defmethod get-href ((user user))
   (format nil "/users/~a/" (username user)))
@@ -39,7 +39,7 @@
 (defun good-password-p (username password)
   (let ((user (find-user username)))
     (if user
-        (string= (password user) (hash password))
+        (string= (password user) (hash password :salt username))
         (error 'user-dont-exists :username username))))
 
 ;;; Representations
@@ -56,10 +56,14 @@
                    users))))
 
 (defmethod parse-representation ((type (eql 'user)) string)
-  (parse-fields `((username "^[a-zA-Z0-9]+$" ,#'identity)
-                  (password "^[a-zA-Z0-9]+$" ,#'hash))
-                'user
-                string))
+  (let ((user
+         (parse-fields `((username "^[a-zA-Z0-9]+$" ,#'identity)
+                         (password "^[a-zA-Z0-9]+$" ,#'identity))
+                       'user
+                       string)))
+    (setf (password user) (hash (password user)
+                                :salt (username user)))
+    user))
 
 ;;; Resources
 ;; Get the list of users

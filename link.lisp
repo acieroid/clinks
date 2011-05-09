@@ -15,7 +15,7 @@
                  :tag-string tags ;; is TAGS a list or a string ?
                  ))
 
-;;;; Representation
+;;; Representation
 (defmethod print-representation ((type (eql 'link)) link)
   (xml (<> 'link
            (<> 'url (url link))
@@ -30,4 +30,3 @@
                      (<> 'link :href (get-href link)
                          (<> 'url (url link))))
                    links))))
-

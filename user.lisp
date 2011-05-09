@@ -31,9 +31,9 @@
 (defun get-all-users ()
   (select 'user :refresh t :flatp t))
 
-;; TODO
-(defun get-user-links (user)
-  nil)
+(defmethod get-links ((user user))
+  (select 'link :where [= [user-id] (id user)]
+          :refresh t :flatp t))
 #.(restore-sql-reader-syntax-state)
 
 (defun good-password-p (username password)
@@ -47,7 +47,8 @@
   (xml (<> 'user
            (<> 'username (username user))
            (<> 'time (rfc3339 user))
-           (print-representation 'links (get-user-links user)))))
+           (<> 'links :href
+               (concatenate 'string (get-href user) "links")))))
 
 (defmethod print-representation ((type (eql 'users)) users)
   (xml (<> 'users

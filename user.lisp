@@ -24,6 +24,11 @@
   (delete-instance-records user))
 
 #.(locally-enable-sql-reader-syntax)
+(defmethod find-link ((user user) url)
+  (first (select 'link :where [and [= [user-id] (id user)]
+                                   [= [url] url]]
+                       :refresh t :flatp t)))
+
 (defun find-user (username)
   (first (select 'user :where [= [username] username]
                  :refresh t :flatp t)))
@@ -40,7 +45,7 @@
   (let ((user (find-user username)))
     (if user
         (string= (password user) (hash password :salt username))
-        (error 'user-dont-exists :username username))))
+        (error 'user-doesnt-exists :username username))))
 
 ;;; Representations
 (defmethod print-representation ((type (eql 'user)) user)
@@ -81,8 +86,8 @@
 ;; Get informations about an user
 (defresource :GET "^/users/([a-zA-Z0-9]+)/?$" (username)
   (let ((user (find-user username)))
-    (when (not user)
-      (error 'user-dont-exists :username username))
+    (unless user
+      (error 'user-doesnt-exists :username username))
     (print-representation 'user user)))
 
 ;; Modify an user

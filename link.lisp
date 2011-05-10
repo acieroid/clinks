@@ -33,7 +33,9 @@
            (<> 'timestamp (rfc3339 link))
            (<> 'title (title link))
            (<> 'notes (notes link))
-           (print-representation 'tags (tag-string link)))))
+           ;; TODO
+;           (print-representation 'tags (tag-string link)
+           (<> 'tags (tag-string link))))))
 
 (defmethod print-representation ((type (eql 'links)) links)
   (xml (<> 'links
@@ -53,14 +55,23 @@
 ;;; Resources
 (defresource :GET "^/users/([a-zA-Z0-9]+)/links/?$" (username)
   (let ((user (find-user username)))
-    (when (not user)
-      (error 'user-dont-exists :username username))
+    (unless user
+      (error 'user-doesnt-exists :username username))
     (print-representation 'links (get-links user))))
+
+(defresource :GET "^/users/([a-zA-Z0-9]+)/links/(.+)$" (username url)
+  (let ((user (find-user username)))
+    (unless user
+      (error 'user-doesnt-exists :username username))
+    (let ((link (find-link user url)))
+      (unless link
+        (error 'link-doesnt-exists :url url))
+      (print-representation 'link link))))
 
 (defresource :POST "^/users/([a-zA-Z0-9]+)/links/?$" (username)
   (let ((user (find-user username)))
-    (when (not user)
-      (error 'user-dont-exists :username username))
+    (unless user
+      (error 'user-doesnt-exists :username username))
     (let ((link (parse-representation 'link
                                       (post-parameter "input"))))
       (setf (user-id link) (id user))

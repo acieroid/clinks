@@ -23,8 +23,12 @@
 
 ;;; Database manipulation
 (defmethod add-link ((link link))
-  (log-message 'info "Adding link '~a'" (url link))
+  (log-message 'info "Adding link: ~a" (url link))
   (update-records-from-instance link))
+
+(defmethod delete-link ((link link))
+  (log-message 'info "Deleting link: ~a" (url link))
+  (delete-instance-records link))
 
 ;;; Representation
 (defmethod print-representation ((type (eql 'link)) link)
@@ -35,7 +39,7 @@
            (<> 'notes (notes link))
            ;; TODO
 ;           (print-representation 'tags (tag-string link)
-           (<> 'tags (tag-string link))))))
+           (<> 'tags (tag-string link)))))
 
 (defmethod print-representation ((type (eql 'links)) links)
   (xml (<> 'links
@@ -77,3 +81,10 @@
       (setf (user-id link) (id user))
       (add-link link)
       (setf (return-code*) 201))))
+
+(defresource-logged user :DELETE "/links/(.+)$" (url)
+  (let ((link (find-link user url)))
+    (unless link
+      (error 'link-doesnt-exists :url url))
+    (delete-link link)
+    (setf (return-code*) 204)))

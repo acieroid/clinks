@@ -72,15 +72,21 @@
         (error 'link-doesnt-exists :url url))
       (print-representation 'link link))))
 
-(defresource :POST "^/users/([a-zA-Z0-9]+)/links/?$" (username)
-  (let ((user (find-user username)))
-    (unless user
-      (error 'user-doesnt-exists :username username))
-    (let ((link (parse-representation 'link
-                                      (post-parameter "input"))))
-      (setf (user-id link) (id user))
-      (add-link link)
-      (setf (return-code*) 201))))
+(defresource-logged user :POST "/links/?$" ()
+  (let ((link (parse-representation 'link
+                                    (post-parameter "input"))))
+    (setf (user-id link) (id user))
+    (add-link link)
+    (setf (return-code*) 201)))
+
+(defresource-logged user :POST "/links/(.+)$" (url)
+  (let ((link (find-link user url))
+        (new-link (parse-representation 'link
+                                        (post-parameter "input"))))
+    (unless link
+      (error 'link-doesnt-exists :url url))
+    (update-records-from-instance (merge-instances new-link link))
+    (setf (return-code*) 201)))
 
 (defresource-logged user :DELETE "/links/(.+)$" (url)
   (let ((link (find-link user url)))

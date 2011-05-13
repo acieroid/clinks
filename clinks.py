@@ -1,4 +1,6 @@
 from xml.dom.minidom import getDOMImplementation
+from string import strip
+from base64 import encodestring
 import httplib, urllib
 
 server_url = 'localhost:8080'
@@ -24,9 +26,11 @@ def checkError(status):
     if status == 401:
         raise ClinksError('User already exists')
 
-def request(method, url, input=None):
+def request(method, url, input=None, username=None, password=None):
     headers = {'Content-type': 'application/x-www-form-urlencoded',
                'Accept': 'text/plain'}
+    if username and password:
+        headers['Authorization'] = ('Basic ' + strip(encodestring(username + ':' + password)))
     conn = httplib.HTTPConnection(server_url)
     conn.request(method, url, 'input=%s' % input, headers)
     print conn.getresponse().read(),
@@ -41,9 +45,11 @@ class User:
     def create(self):
         request('POST', '/users/', self.to_xml())
     def update(self):
-        request('POST', '/users/%s' % self.username, self.to_xml())
+        request('POST', '/users/%s' % self.username, self.to_xml(),
+                self.username, self.password)
     def delete(self):
-        request('DELETE', '/users/%s' % self.username, self.to_xml())
+        request('DELETE', '/users/%s' % self.username, self.to_xml(),
+                self.username, self.password)
 
 class Link:
     def __init__(self, url, title='', notes='', tags='', 
@@ -55,15 +61,18 @@ class Link:
         self.username = username
         self.password = password
     def to_xml(self):
-        return to_xml('link', [(url, self.url),
-                               (title, self.title),
-                               (notes, self.notes),
-                               (tags, self.tags)])
+        return to_xml('link', [('url', self.url),
+                               ('title', self.title),
+                               ('notes', self.notes),
+                               ('tags', self.tags)])
     def create(self):
-        request('POST', '/users/%s/links/' % self.username, self.to_xml())
+        request('POST', '/users/%s/links/' % self.username, self.to_xml(),
+                self.username, self.password)
     def update(self):
-        request('POST', '/users/%s/links/%s' % (self.username, self.url)
-                self.to_xml())
+        request('POST', '/users/%s/links/%s' % (self.username, self.url),
+                self.to_xml(), self.username, self.password)
     def delete(self):
         request('DELETE', '/users/%s/links/%s' % (self.username, self.url),
-                self.to_xml())
+                self.to_xml(), self.username, self.password)
+
+# TODO: use urllib2 for auth

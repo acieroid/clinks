@@ -63,8 +63,8 @@
 
 (defmethod parse-representation ((type (eql 'user)) string)
   (let ((user
-         (parse-fields `((username "^[a-zA-Z0-9]+$" ,#'identity)
-                         (password "^[a-zA-Z0-9]+$" ,#'identity))
+         (parse-fields `((username "^(<username>)$" ,#'identity)
+                         (password "^(<password>)$" ,#'identity))
                        'user
                        string)))
     (setf (password user) (hash (password user)
@@ -84,7 +84,8 @@
     (setf (return-code*) 201)))
 
 ;; Get informations about an user
-(defresource :GET "^/users/([a-zA-Z0-9]+)/?$" (username)
+(defresource :GET "^/users/(<username>)/?$" (username)
+  (log-message 'info "cc")
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))

@@ -9,6 +9,7 @@
                (:file "xml")
                (:file "utils")
                (:file "errors")
+               (:file "regex")
                (:file "resources")
                (:file "data")
                (:file "user")

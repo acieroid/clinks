@@ -32,7 +32,9 @@
            (text (string seed)
              (let ((element (assoc current-field spec)))
                (if element
-                   (if (ppcre:scan (second element) string)
+                   (if (ppcre:scan (replace-regexes
+                                    (second element))
+                                   string)
                        (setf (slot-value instance current-field)
                              (funcall (third element) string))
                        (error 'forbidden-characters :field current-field))

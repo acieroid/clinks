@@ -49,21 +49,21 @@
                    links))))
 
 (defmethod parse-representation ((type (eql 'link)) string)
-  (parse-fields `((url "^[^<>]+$" ,#'identity)
-                  (title "^[^<>]+$" ,#'identity)
-                  (notes "^[^<>]+$" ,#'identity)
-                  (tags "^[^<>]+$" ,#'identity))
+  (parse-fields `((url "^<url>$" ,#'identity)
+                  (title "^<title>$" ,#'identity)
+                  (notes "^<notes>$" ,#'identity)
+                  (tags "^<tags>$" ,#'identity))
                 'link
                 string))
 
 ;;; Resources
-(defresource :GET "^/users/([a-zA-Z0-9]+)/links/?$" (username)
+(defresource :GET "^/users/(<username>)/links/?$" (username)
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))
     (print-representation 'links (get-links user))))
 
-(defresource :GET "^/users/([a-zA-Z0-9]+)/links/(.+)$" (username url)
+(defresource :GET "^/users/(<username>)/links/(<url>)$" (username url)
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))
@@ -79,7 +79,7 @@
     (add-link link)
     (setf (return-code*) 201)))
 
-(defresource-logged user :POST "/links/(.+)$" (url)
+(defresource-logged user :POST "/links/(<username>)$" (url)
   (let ((link (find-link user url))
         (new-link (parse-representation 'link
                                         (post-parameter "input"))))
@@ -88,7 +88,7 @@
     (update-records-from-instance (merge-instances new-link link))
     (setf (return-code*) 201)))
 
-(defresource-logged user :DELETE "/links/(.+)$" (url)
+(defresource-logged user :DELETE "/links/(<username>)$" (url)
   (let ((link (find-link user url)))
     (unless link
       (error 'link-doesnt-exists :url url))

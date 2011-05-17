@@ -3,18 +3,19 @@
 (defun create-rest-dispatcher (method regex handler)
   (let ((scanner (ppcre:create-scanner regex)))
     (lambda (request)
-      (and (ppcre:scan scanner (script-name request))
-           (eq method (request-method*))
+      (and (eq method (request-method*))
+           (ppcre:scan scanner (script-name request))
            handler))))
 
 (defmacro defresource (method regex variables &body body)
   `(push (create-rest-dispatcher
-          ,method ,regex
+          ,method ,(replace-regexes regex)
           (lambda ()
             (destructuring-bind ,variables
                (coerce
                 (second (multiple-value-list
-                         (ppcre:scan-to-strings ,regex (script-name*))))
+                         (ppcre:scan-to-strings ,(replace-regexes  regex)
+                                                (script-name*))))
                 'list)
               (setf (hunchentoot:content-type*) "text/xml")
               (handler-case
@@ -33,7 +34,7 @@
         (req-username (gensym "req-username")) ; requested username
         (password (gensym "password")))
     `(defresource ,method
-         ,(concatenate 'string "^/users/([a-zA-Z0-9]+)" regex)
+         ,(concatenate 'string "^/users/(<username>)" regex)
          ,(cons req-username variables)
        (multiple-value-bind (,auth-username ,password) (authorization)
          (unless ,auth-username

@@ -45,7 +45,10 @@
   (xml (<> 'links
            (<>iter (lambda (link)
                      (<> 'link :href (get-href link)
-                         (<> 'url (url link))))
+                         (<> 'url (url link))
+                         (<> 'timestamp (rfc3339 link))
+                         (<> 'title (title link))
+                         (<> 'notes (notes link))))
                    links))))
 
 (defmethod parse-representation ((type (eql 'link)) string)

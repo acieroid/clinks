@@ -58,7 +58,8 @@
 (defmethod print-representation ((type (eql 'users)) users)
   (xml (<> 'users
            (<>iter (lambda (user)
-                     (<> 'user :href (get-href user)))
+                     (<> 'user :href (get-href user)
+                         (<> 'username (username user))))
                    users))))
 
 (defmethod parse-representation ((type (eql 'user)) string)

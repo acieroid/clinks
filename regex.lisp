@@ -5,7 +5,7 @@
     (everything . "[^<>]+")
     (username . "<word>")
     (password . "<word>")
-    (url . "[a-zA-Z0-9\-\.\:]+")
+    (url . "[a-zA-Z0-9\-\.\:\/]+")
     (title . "<everything>")
     (notes . "<everything>")
     (tag . "<word>")

@@ -38,7 +38,7 @@ def request(method, url, input=None, username=None, password=None):
     response = conn.getresponse()
     text = response.read()
     if (response.status != 200):
-        print text,
+        print (text)
     return text
 
 class User:
@@ -108,13 +108,13 @@ def retrieve(username):
                     username))
 
 def usage():
-    print '%s: possible actions are:' % sys.argv[0]
-    print 'createuser username password'
-    print '\t create a new user'
-    print 'save url [title [tags [notes]]]'
-    print '\t save a new url, tags are comma separated values'
-    print 'retrieve [username]'
-    print '\t retrive the links of an user (default to your user)'
+    print ('%s: possible actions are:' % sys.argv[0])
+    print ('createuser username password')
+    print ('\t create a new user')
+    print ('save url [title [tags [notes]]]')
+    print ('\t save a new url, tags are comma separated values')
+    print ('retrieve [username]')
+    print ('\t retrive the links of an user (default to your user)')
 
 if __name__ == "__main__":
     length = len(sys.argv)

@@ -82,7 +82,7 @@
     (add-link link)
     (setf (return-code*) 201)))
 
-(defresource-logged user :POST "/links/(<username>)$" (url)
+(defresource-logged user :POST "/links/(<url>)$" (url)
   (let ((link (find-link user url))
         (new-link (parse-representation 'link
                                         (post-parameter "input"))))
@@ -91,7 +91,7 @@
     (update-records-from-instance (merge-instances new-link link))
     (setf (return-code*) 201)))
 
-(defresource-logged user :DELETE "/links/(<username>)$" (url)
+(defresource-logged user :DELETE "/links/(<url>)$" (url)
   (let ((link (find-link user url)))
     (unless link
       (error 'link-doesnt-exists :url url))

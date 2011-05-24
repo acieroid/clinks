@@ -1,8 +1,13 @@
 (in-package :clinks)
 
+(defparameter *tag-separator* #\,)
+
 (defclass tag ()
   ((name :accessor name :initarg :name)
    (links :accessor links :initarg :links)))
+
+(defun split-tags (tags)
+  (split-sequence:split-sequence *tag-separator* tags))
 
 ;;; Database manipulation
 #.(locally-enable-sql-reader-syntax)
@@ -18,6 +23,20 @@
                                                  [like [tags] (cat "%," tag ",%")]]]
                            :refresh t :flatp t))))
 
+
+(defun find-links (user tags)
+  (flet ((cat (&rest str)
+           (apply #'concatenate 'string str)))
+    (let ((props (apply (sql-operator 'and)
+                        (mapcar (lambda (tag)
+                                  [or [like [tags] tag]
+                                  [like [tags] (cat tag ",%")]
+                                  [like [tags] (cat "%," tag)]
+                                  [like [tags] (cat "%," tag ",%") ]])
+                                tags))))
+      (select 'link :where [and [= [user-id] (id user)] props ]
+              :refresh t :flatp t))))
+
 #.(restore-sql-reader-syntax-state)
 
 ;;; Representations
@@ -32,8 +51,8 @@
                 string))
 
 ;;; Resources
-(defresource :GET "^/users/(<username>)/tags/(<tag>)/?$" (username name)
+(defresource :GET "^/users/(<username>)/tags/(<tags>)/?$" (username tags)
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))
-    (print-representation 'tag (find-tag user name))))
+    (print-representation 'links (find-links user (split-tags tags)))))

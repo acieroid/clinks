@@ -9,7 +9,9 @@
     (title . "<everything>")
     (notes . "<everything>")
     (tag . "<word>")
-    (tags . "(<tag>,?)+")))
+    ;; Avoid capture of each tag, but it's really weird that [] works
+    ;; for that
+    (tags . "[<tag>,?]+")))
 
 (defun get-regex (string)
   (let ((symbol (intern

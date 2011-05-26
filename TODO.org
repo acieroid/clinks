@@ -1,27 +1,15 @@
 Clinks implementation
 * RESTful interface
 See README.
-  - Database management
-  - [X] Classes:
-    - Link
-    - Tag
-    - User
-  - [X] Resource definition:
-    #+BEGIN_SRC lisp
-    (defresource GET "/<user>/links" ()
-      …)
-    #+END_SRC
-  - [X] Representation printing:
-    #+BEGIN_SRC lisp
-    (print-representation 'links (get-all-links)
-    #+END_SRC
-  - [X] Parsing representations:
-    #+BEGIN_SRC lisp
-    (parse-representation 'link str)
-    #+END_SRC
+  - Database:
+    - Use better representation for tags
+  - Using pages when there are too much links/tags
+  - Links
+    - Use a hash for designing tags instead of their url ?
 * Web interface
   - Import links from delicious or firefox
   - Fetch the page title
+  - With python, using the python CLI interface
 * Firefox plugin
 * Chrome plugin
 Easily doable, just some HTML and Javascript

@@ -99,8 +99,11 @@ def getText(node, name, default=""):
     else:
         return default
 
-def retrieve(username):
-    xml = request('GET', '/users/%s/links/' % username)
+def retrieve(username, tags):
+    if tags:
+        xml = request('GET', '/user/%s/tags/%s' % (username, ','.join(tags)))
+    else:
+        xml = request('GET', '/users/%s/links/' % username)
     dom = parseString(xml)
     for node in dom.firstChild.getElementsByTagName('link'):
         print (Link(getText(node, 'url'), getText(node, 'title'), 
@@ -113,8 +116,9 @@ def usage():
     print ('\t create a new user')
     print ('save url [title [tags [notes]]]')
     print ('\t save a new url, tags are comma separated values')
-    print ('retrieve [username]')
-    print ('\t retrive the links of an user (default to your user)')
+    print ('retrieve [username [tag]]')
+    print ('\t retrive the links of an user (default to your user) matching')
+    print ('\t one or multiple tags')
 
 if __name__ == "__main__":
     length = len(sys.argv)
@@ -131,4 +135,5 @@ if __name__ == "__main__":
              (length >= 5 and sys.argv[4]) or "",
              (length >= 6 and sys.argv[5]) or "")
     elif sys.argv[1] == 'retrieve':
-        retrieve((length == 3 and sys.argv[2]) or default_username)
+        retrieve((length >= 3 and sys.argv[2]) or default_username,
+                 (length >= 4 and sys.argv[3:]) or [])

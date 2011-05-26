@@ -17,7 +17,6 @@
                          (ppcre:scan-to-strings ,(replace-regexes  regex)
                                                 (script-name*))))
                 'list)
-              (setf (hunchentoot:content-type*) "text/xml")
               (handler-case
                   (progn
                     (let ((result (progn ,@body)))

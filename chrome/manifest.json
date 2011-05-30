@@ -1,0 +1,11 @@
+{
+    "name":         "Clinks",
+    "version":      "1.0",
+    "description":  "Manage your bookmarks online",
+    "browser_action": {
+        "popup": "save.html"
+    },
+    "permissions": [
+        "tabs"
+    ]
+}

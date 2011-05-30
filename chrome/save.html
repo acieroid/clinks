@@ -1,0 +1,17 @@
+<style>
+</style>
+
+<script>
+chrome.tabs.getSelected(undefined, function (tab) { 
+    document.forms["link"].url.value = tab.url;
+    document.forms["link"].title.value = tab.title;
+})
+</script>
+
+<form name="link" action="#" method="post">
+  <label>URL: <input type="text" id="url" value="foo"/></label><br/>
+  <label>Title: <input type="text" id="title"/></label><br/>
+  <label>Notes: <textarea id="notes"></textarea></label><br/>
+  <label>Tags: <input type="text" id="tags"/></label><br/>
+  <input type="submit"/>
+</form>

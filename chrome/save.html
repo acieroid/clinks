@@ -17,15 +17,30 @@ function get_link_representation() {
 }
 
 function message(str) {
-    document.getElementById("message").innerHTML = str;
+    var div = document.getElementById("message");
+    div.innerHTML = str;
 }
 
 function save_link() {
     req = new XMLHttpRequest();
     req.onreadystatechange = function() {
-        /* TODO */
         if (req.readyState == 4) {
-            message("Returned " + req.status);
+            switch (req.status) {
+            case 0:
+                message("Error when submitting, check your configuration");
+                break;
+            case 401:
+                message("Permission denied, check your identification settings");
+                break;
+            case 415:
+                message("Representation not parsable");
+                break;
+            case 201:
+                message("Link saved !");
+                break;
+            default:
+                message("Unknown return code: " + req.status);
+            }
         }
         else {
             message("Sending...");
@@ -34,7 +49,6 @@ function save_link() {
     try {
         req.open(
             "POST",
-            /* TODO */
             "http://localhost:8080/user/foo/links/",
             true);
         req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -48,10 +62,10 @@ function save_link() {
 </script>
 
 <div id="message"></div>
-<form name="link" action="#" method="post">
+<form name="link">
   <label>URL: <input type="text" id="url"/></label><br/>
   <label>Title: <input type="text" id="title"/></label><br/>
   <label>Notes: <textarea id="notes"></textarea></label><br/>
   <label>Tags: <input type="text" id="tags"/></label><br/>
-  <input type="submit" value="Save" onclick="save_link();"/>
+  <input type="button" value="Save" onclick="save_link();"/>
 </form>

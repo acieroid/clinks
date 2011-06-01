@@ -7,6 +7,7 @@
         "popup": "save.html"
     },
     "permissions": [
-        "tabs"
+        "tabs",
+        "<all_urls>"
     ]
 }

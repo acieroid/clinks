@@ -1,0 +1,31 @@
+<html>
+<head><title>Clinks options</title></head>
+<script type="text/javascript">
+function save_options()
+{
+    localStorage["url"] = document.forms["options"].url.value;
+    localStorage["username"] = document.forms["options"].username.value;
+    localStorage["password"] = document.forms["options"].password.value;
+}
+
+function restore_options()
+{
+    document.forms["options"].url.value = (localStorage["url"] ||
+                                           "http://localhost:8080");
+    document.forms["options"].username.value = (localStorage["username"] || "");
+    document.forms["options"].password.value = (localStorage["password"] || "");
+}
+</script>
+
+<body onload="restore_options();">
+
+<form name="options">
+    <label>Clinks URL: <input type="text" id="url"/></label><br/>
+    <label>Username: <input type="text" id="username"/></label><br/>
+    <label>Password: <input type="text" id="password"/></label><br/>
+
+    <input type="button" value="Save" onclick="save_options();"/>
+</form>
+
+</body>
+</html>

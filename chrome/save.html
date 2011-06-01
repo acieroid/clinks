@@ -51,6 +51,9 @@ function save_link() {
             "POST",
             localStorage["url"] + "/users/" + localStorage["username"] + "/links/",
             true,
+            /* TODO: Authentification doesn't seems to work, the
+             * server doesn't get any informations about the username
+             * and the password */
             localStorage["username"],
             localStorage["password"]);
         req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");

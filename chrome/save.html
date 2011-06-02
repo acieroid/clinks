@@ -1,0 +1,75 @@
+<style>
+</style>
+
+<script>
+chrome.tabs.getSelected(undefined, function (tab) { 
+    document.forms["link"].url.value = tab.url;
+    document.forms["link"].title.value = tab.title;
+})
+
+function get_link_representation() {
+    return ("<link>" + 
+            "<url>" + document.forms["link"].url.value + "</url>" + 
+            "<title>" + document.forms["link"].title.value + "</title>" + 
+            "<notes>" + document.forms["link"].notes.value + "</notes>" + 
+            "<tags>" + document.forms["link"].tags.value + "</tags>" + 
+            "</link>");
+}
+
+function message(str) {
+    var div = document.getElementById("message");
+    div.innerHTML = str;
+}
+
+function save_link() {
+    req = new XMLHttpRequest();
+    req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+            switch (req.status) {
+            case 0:
+                message("Error when submitting, check your configuration");
+                break;
+            case 401:
+                message("Permission denied, check your identification settings");
+                break;
+            case 415:
+                message("Representation not parsable");
+                break;
+            case 201:
+                message("Link saved !");
+                break;
+            default:
+                message("Unknown return code: " + req.status);
+            }
+        }
+        else {
+            message("Sending...");
+        }
+    }
+    try {
+        req.open(
+            "POST",
+            localStorage["url"] + "/users/" + localStorage["username"] + "/links/",
+            true,
+            /* TODO: Authentification doesn't seems to work, the
+             * server doesn't get any informations about the username
+             * and the password */
+            localStorage["username"],
+            localStorage["password"]);
+        req.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        req.send("input=" + get_link_representation());
+    }
+    catch (err) {
+        alert("" + err);
+    }
+}
+</script>
+
+<div id="message"></div>
+<form name="link">
+  <label>URL: <input type="text" id="url"/></label><br/>
+  <label>Title: <input type="text" id="title"/></label><br/>
+  <label>Notes: <textarea id="notes"></textarea></label><br/>
+  <label>Tags: <input type="text" id="tags"/></label><br/>
+  <input type="button" value="Save" onclick="save_link();"/>
+</form>

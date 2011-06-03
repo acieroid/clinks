@@ -1,7 +1,7 @@
 <style>
 </style>
 
-<script type="text/javascript" src="clinks.js"/>
+<script type="text/javascript" src="clinks.js"></script>
 <script type="text/javascript">
 chrome.tabs.getSelected(undefined, function (tab) {
     document.forms["link"].url.value = tab.url;
@@ -14,12 +14,13 @@ function message(str) {
 }
 
 function save_link() {
-    var link = new Link(document.forms["link"].url.value,
-                        document.forms["link"].title.value,
-                        document.forms["link"].tags.value,
-                        document.forms["link"].notes.value,
-                        localStorage["username"],
-                        localStorage["password"]);
+    var link = new Clinks.Link(document.forms["link"].url.value,
+                               document.forms["link"].title.value,
+                               document.forms["link"].tags.value,
+                               document.forms["link"].notes.value,
+                               localStorage["username"],
+                               localStorage["password"]);
+    message("Sending...");
     link.onerror = function(status, str) {
         message(str);
     }

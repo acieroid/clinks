@@ -1,5 +1,5 @@
-var Clinks {
-    function Link(url, title, tags, notes, username, password) {
+var Clinks = {
+    Link : function(url, title, tags, notes, username, password) {
         this.url = url;
         this.title = title;
         this.tags = tags;
@@ -21,6 +21,9 @@ var Clinks {
         }
 
         this.create = function(server) {
+            /* the 'this' variable seems to point to the
+             * XMLHttpRequest in the function below */
+            onerror = this.onerror;
             req = new XMLHttpRequest();
             req.onreadystatechange = function() {
                 if (req.readyState == 4) {
@@ -41,7 +44,7 @@ var Clinks {
                     default:
                         str = "Unknown return code";
                     }
-                    this.onerror(req.status, str);
+                    onerror(req.status, str);
                 }
             }
             try {
@@ -52,7 +55,7 @@ var Clinks {
                                      "application/x-www-form-urlencoded");
                 req.send("input=" + this.representation());
             }
-            catch {
+            catch (error) {
                 this.onerror(0, "Error when connecting to the server");
             }
         }

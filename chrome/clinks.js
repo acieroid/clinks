@@ -48,14 +48,16 @@ var Clinks = {
                 }
             }
             try {
-                /* TODO: HTTP basic auth */
                 req.open("POST", server + "/users/" + this.user + "/links",
                          true);
                 req.setRequestHeader("Content-Type",
                                      "application/x-www-form-urlencoded");
+                req.setRequestHeader("Authorization", "Basic " +
+                                     btoa(this.user + ":" + this.password));
                 req.send("input=" + this.representation());
             }
             catch (error) {
+                throw error;
                 this.onerror(0, "Error when connecting to the server");
             }
         }

@@ -53,7 +53,7 @@ var Clinks = {
                 req.setRequestHeader("Content-Type",
                                      "application/x-www-form-urlencoded");
                 req.setRequestHeader("Authorization", "Basic " +
-                                     btoa(this.user + ":" + this.password));
+                                     btoa(this.username + ":" + this.password));
                 req.send("input=" + this.representation());
             }
             catch (error) {

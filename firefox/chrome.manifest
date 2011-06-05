@@ -1,0 +1,2 @@
+content clinks chrome/content/
+overlay chrome://browser/content/browser.xul chrome://clinks/content/clinks.xul

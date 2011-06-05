@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<overlay id="clinks"
+         xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+  <menupopup id="menu_ToolsPopup">
+    <menuitem label="Save bookmark with clinks..."/>
+  </menupopup>
+
+</overlay>

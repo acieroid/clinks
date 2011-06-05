@@ -7,7 +7,7 @@ var Clinks = {
         this.username = username;
         this.password = password;
 
-        this.onerror = function(status, str) {
+        this.response = function(status, str) {
             alert(str);
         }
 
@@ -23,32 +23,15 @@ var Clinks = {
         this.create = function(server) {
             /* the 'this' variable seems to point to the
              * XMLHttpRequest in the function below */
-            onerror = this.onerror;
+            onresponse = this.onresponse;
             req = new XMLHttpRequest();
             req.onreadystatechange = function() {
                 if (req.readyState == 4) {
-                    var str;
-                    switch (req.status) {
-                    case 0:
-                        str = "Error when submitting, check your configuration";
-                        break;
-                    case 401:
-                         str = "Permission denied, check your identification settings";
-                        break;
-                    case 415:
-                        str = "Representation not parsable";
-                        break;
-                    case 201:
-                        str = "Link saved !";
-                        break;
-                    default:
-                        str = "Unknown return code";
-                    }
-                    onerror(req.status, str);
+                    onresponse(req.status, req.responseText);
                 }
             }
             try {
-                req.open("POST", server + "/users/" + this.user + "/links",
+                req.open("POST", server + "/users/" + this.username + "/links",
                          true);
                 req.setRequestHeader("Content-Type",
                                      "application/x-www-form-urlencoded");
@@ -57,8 +40,7 @@ var Clinks = {
                 req.send("input=" + this.representation());
             }
             catch (error) {
-                throw error;
-                this.onerror(0, "Error when connecting to the server");
+                this.onresponse(0, "Error when connecting to the server");
             }
         }
     }

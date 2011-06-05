@@ -21,7 +21,7 @@ function save_link() {
                                localStorage["username"],
                                localStorage["password"]);
     message("Sending...");
-    link.onerror = function(status, str) {
+    link.onresponse = function(status, str) {
         message(str);
     }
     link.create(localStorage["url"]);

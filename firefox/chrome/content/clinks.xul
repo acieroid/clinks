@@ -2,8 +2,20 @@
 <overlay id="clinks"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+  <vbox>
+    <panel id="clinks-panel" noautohide="false" titlebar="normal" label="Save a bookmark">
+      <label id="message"/>
+      <label control="url" value="URL: "/> <textbox id="url"/>
+      <label control="title" value="Title: "/> <textbox id="title"/>
+      <label control="tags" value="Tags: "/> <textbox id="tags"/>
+      <label control="notes" value="Notes: " multiline="true"/> <textbox id="notes"/>
+      <button label="Save" oncommand="save_link();"/>
+    </panel>
+  </vbox>
+
   <menupopup id="menu_ToolsPopup">
-    <menuitem label="Save bookmark with clinks..."/>
+    <menuitem label="Save bookmark with clinks..."
+              oncommand="document.getElementById('clinks-panel').openPopup(document.getElementById('content'))"/>
   </menupopup>
 
 </overlay>

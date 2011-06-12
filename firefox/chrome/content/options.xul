@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+
+<prefwindow id="clinks-prefs"
+     title="Clinks Options"
+     xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+ 
+<prefpane id="clinks-pane" label="Server settings">
+  <preferences>
+    <preference id="pref_url" name="clinks.url" type="string"/>
+    <preference id="pref_username" name="clinks.username" type="string"/>
+    <preference id="pref_password" name="clinks.password" type="string"/>
+  </preferences>
+ 
+  <vbox align="center">
+    <label control="url" value="Server URL: "/> 
+      <textbox preference="pref_url" id="url"/>
+    <label control="username" value="Username: "/> 
+      <textbox preference="pref_username" id="username"/>
+    <label control="password" value="Password: "/>
+      <textbox type="password" preference="pref_password" id="password"/>
+  </vbox>
+</prefpane>
+ 
+</prefwindow>

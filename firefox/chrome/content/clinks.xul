@@ -2,6 +2,34 @@
 <overlay id="clinks"
          xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+    <script src="clinks.js"></script>
+    <script>
+    function element(id) {
+        return document.getElementById(id);
+    }
+    function message(str) {
+        element("message").value = str;
+    }
+    function preference(str) {
+        var service = Components.classes["@mozilla.org/preferences-service;1"]
+            .getService(Components.interfaces.nsIPrefService);
+        var branch = service.getBranch("clinks.");
+        return branch.getCharPref(str);
+    }
+    function save_link() {
+        var link = new Clinks.Link(element("url").value,
+                                   element("title").value,
+                                   element("tags").value,
+                                   element("notes").value,
+                                   preference("username"),
+                                   preference("password"));
+        message("Sending...");
+        link.onresponse = function(status, str) {
+            message(str);
+        }
+        link.create(preference("url"));
+    }
+  </script>
   <vbox>
     <panel id="clinks-panel" noautohide="false" titlebar="normal" label="Save a bookmark">
       <label id="message"/>

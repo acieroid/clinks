@@ -27,7 +27,10 @@ var Clinks = {
             req = new XMLHttpRequest();
             req.onreadystatechange = function() {
                 if (req.readyState == 4) {
-                    onresponse(req.status, req.responseText);
+                    if (req.status == 0)
+                        onresponse(0, "Error when connecting to the server");
+                    else
+                        onresponse(req.status, req.responseText);
                 }
             }
             try {

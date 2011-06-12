@@ -20,5 +20,6 @@
     <em:description>Manage your bookmarks online</em:description>
     <em:creator>Quentin Stievenart</em:creator>
     <em:homepageURL>http://github.com/acieroid/clinks</em:homepageURL>
+    <em:optionsURL>chrome://clinks/content/options.xul</em:optionsURL>
   </Description>
 </RDF>

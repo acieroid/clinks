@@ -9,7 +9,7 @@
     }
     function init() {
         element("url").value = content.document.URL;
-        element("title").value = content.document.URL;
+        element("title").value = content.document.title;
     }
     function message(str) {
         element("message").value = str;
@@ -35,7 +35,7 @@
     }
   </script>
   <vbox>
-    <panel id="clinks-panel" noautohide="false" titlebar="normal" label="Save a bookmark" onload="init();">
+    <panel id="clinks-panel" noautohide="false" titlebar="normal" label="Save a bookmark" onpopupshown="init();">
       <label id="message"/>
       <label control="url" value="URL: "/> <textbox id="url"/>
       <label control="title" value="Title: "/> <textbox id="title"/>

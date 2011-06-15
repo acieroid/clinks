@@ -1,12 +1,57 @@
 clinks -- A RESTful bookmark manager
-
 * Introduction
 Clinks is a web app made to manage your bookmarks. It is inspired by
 [[http://delicious.com][delicious]], but it focus on providing a RESTful interface to access
-your bookmarks. Browsers plugins and CLI access are planned, and maybe
-some neat web frontend like delicious' one.
+your bookmarks. Browsers plugins and CLI access are available, and a
+simple web fronted is planned.
+* Launching
+Once the source is downloaded and the system is ASDF-loaded (see
+[[http://common-lisp.net/project/asdf/asdf/Configuring-ASDF.html#Configuring-ASDF][the documentation]]), you just have to call =start= to launch clinks,
+which will be listening on the port 8080.
+* CLI interface
+A simple CLI interface (that requires python 2) is available and allow
+the following operations:
+#+BEGIN_SRC text
+clinks.py: possible actions are:
+createuser username password
+	 create a new user
+save url [title [tags [notes]]]
+	 save a new url, tags are comma separated values
+retrieve [username [tag]]
+	 retrive the links of an user (default to your user) matching
+	 one or multiple tags
+#+END_SRC
 
-* Resources
+For the moment, parameters (username, password, server URL) should be
+changed directly in =clinks.py=.
+* Browser plugins
+Firefox and Chrome plugins provide a simple way to save new bookmarks
+to clinks. You can adjust settings (username, password, server url)
+through the preference system of the browser
+* Accessing the API with curl
+If you want to have more control over clinks (or to test things not
+yet available in any plugins or interface), you can easily access
+the API with =curl= with the following arguments:
+#+BEGIN_SRC shell
+curl -i -X <Method> <URL>/<Resource>
+#+END_SRC
+
+For example:
+#+BEGIN_SRC shell
+$ curl -i -X DELETE http://foo:bar@localhost:8080/users/foo/links/http://cliki.net
+HTTP/1.1 204 No Content
+Content-Length: 30
+Date: Wed, 15 Jun 2011 21:11:10 GMT
+Server: Hunchentoot 1.1.1
+Content-Type: text/xml; charset=utf-8
+#+END_SRC
+
+When =POST= or =UPDATE= parameters are needed, use =input= as the
+parameter name:
+#+BEGIN_SRC shell
+curl -i -X POST -d "input=<link><url>http://cliki.net</url><tags>lisp</tags></link>" http://foo:bar@localhost:8081/users/foo/links
+#+END_SRC
+* Resources (API) 
 Clinks use three resources:
   1. links
   2. tags

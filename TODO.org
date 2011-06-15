@@ -1,16 +1,14 @@
 Clinks implementation
-* RESTful interface
-See README.
-  - Database:
-    - Use better representation for tags
+* TODO RESTful interface
+  - Use better database representation for tags
   - Using pages when there are too much links/tags
-  - Links
-    - Use a hash for designing tags instead of their url ?
-* Web interface
-  - Import links from delicious or firefox
+  - Use a hash for designing tags instead of their url ?
+  - Import/export page
+* TODO Web interface
+  - Import links from delicious or firefox -> simply call the
+    import/export ressource
   - Fetch the page title
-  - With python, using the python CLI interface
-* Firefox plugin
-* Chrome plugin
-Easily doable, just some HTML and Javascript
-* CLI interface
+I  - With python, using the python CLI interface
+* DONE Firefox plugin
+* DONE Chrome plugin
+* DONE CLI interface

@@ -52,6 +52,10 @@ parameter name:
 curl -i -X POST -d "input=<link><url>http://cliki.net</url><tags>lisp</tags></link>" http://foo:bar@localhost:8081/users/foo/links
 #+END_SRC
 * Resources (API) 
+First of all, note that the API described in this section might be a
+little outdated compared to the actual API. Refer to the source code
+for up-to-date information.
+
 Clinks use three resources:
   1. links
   2. tags

@@ -1,0 +1,66 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Clinks</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+      a { text-decoration: none; }
+      a:visited { color: blue; }
+      a:hover { text-decoration: underline; }
+
+      #menu { text-align: center; }
+      #dialogs { text-align: center; }
+      .connected {
+      }
+      .disconnected {
+      }
+      .dialog {
+          display: inline-block;
+          background-color: #abf;
+          padding: 10px;
+      }
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script type="text/javascript" src="clinks.js"></script>
+  </head>
+  <body>
+    <div id="menu">
+      <div class="disconnected">
+        <a href="#" id="connect_popup">Connect</a>
+      </div>
+      <div class="connected">
+        <a href="#" id="save_popup">Save</a> - 
+        <a href="#" id="disconnect">Disconnect</a>
+      </div>
+    </div>
+    <div id="dialogs">
+      <div id="form_connect" class="dialog">
+        <label for="username">Username: </label>
+        <input type="text" id="username"/><br/>
+
+        <label for="password">Password: </label>
+        <input type="password" id="password"/><br/>
+
+        <input type="button" id="connect" value="Connect"/>
+      </div>
+
+      <div id="form_save" class="dialog">
+        <label for="url">URL: </label>
+        <input type="text" id="url"/><br/>
+
+        <label for="title">Title: </label>
+        <input type="text" id="title"/><br/>
+
+        <label for="tags">Tags: </label>
+        <input type="text" id="tags"/><br/>
+
+        <label for="notes">Notes: </label>
+        <textarea id="notes"></textarea><br/>
+
+        <input type="button" id="save" value="Save"/>
+      </div>
+    </div>
+
+    <div id="links"></div>
+
+  </body>
+</html>

@@ -2,8 +2,7 @@
 
 (setf *handle-http-errors-p* nil
       *message-log-pathname* #p"/tmp/clinks.log"
-      *hunchentoot-default-external-format* :utf-8
-      *default-content-type* "text/xml; charset=utf-8")
+      *hunchentoot-default-external-format* :utf-8)
 
 (defun find-db (name)
   (find-if (lambda (db)
@@ -26,4 +25,10 @@
 
 (defun start (&optional (port 8080) (db-specs '("clinks.db")) (db-type :sqlite3))
   (start-databases db-specs db-type)
+  (push
+   (hunchentoot:create-static-file-dispatcher-and-handler "/" "html/index.html")
+   hunchentoot:*dispatch-table*)
+  (push
+   (hunchentoot:create-static-file-dispatcher-and-handler "/clinks.js" "html/clinks.js")
+   hunchentoot:*dispatch-table*)
   (hunchentoot:start (make-instance 'acceptor :port port)))

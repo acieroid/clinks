@@ -19,6 +19,8 @@
                 'list)
               (handler-case
                   (progn
+                    (setf (hunchentoot:content-type*) "text/xml; charset=utf-8")
+                    (log-message 'info "Resource accessed: ~a" (script-name*))
                     (let ((result (progn ,@body)))
                       (if (stringp result)
                           result

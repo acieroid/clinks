@@ -86,7 +86,6 @@
 
 ;; Get informations about an user
 (defresource :GET "^/users/(<username>)/?$" (username)
-  (log-message 'info "cc")
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))

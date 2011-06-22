@@ -5,6 +5,12 @@
    (reason :initarg :reason :reader reason))
   (:documentation "Parent class of every clinks related error"))
 
+(defmethod print-object :before ((e clinks-error) stream)
+  (princ "<error>" stream))
+
+(defmethod print-object :after ((e clinks-error) stream)
+  (princ "</error>" stream))
+
 ;;; Parse errors
 (define-condition parse-representation-error (clinks-error)
   ((code :initform 415)

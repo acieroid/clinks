@@ -5,10 +5,10 @@
    (user :db-kind :join :accessor user
          :db-info (:join-class user :home-key user-id
                    :foreign-key id :set nil))
-   (url :type string :accessor url :initarg :url)
-   (title :type string :accessor title :initarg :title)
-   (notes :type string :accessor notes :initarg :notes)
-   (tags :type string :accessor tag-string :initarg :tag-string)))
+   (url :type string :accessor url :initarg :url :initform "")
+   (title :type string :accessor title :initarg :title :initform "")
+   (notes :type string :accessor notes :initarg :notes :initform "")
+   (tags :type string :accessor tag-string :initarg :tag-string :initform "")))
 
 (defun make-link (user url title notes tags)
   (make-instance 'link

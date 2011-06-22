@@ -137,3 +137,5 @@ if __name__ == "__main__":
     elif sys.argv[1] == 'retrieve':
         retrieve((length >= 3 and sys.argv[2]) or default_username,
                  (length >= 4 and sys.argv[3:]) or [])
+    else:
+        print ("Unknown action: %s" % sys.argv[1])

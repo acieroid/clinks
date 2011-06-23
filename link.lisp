@@ -10,14 +10,6 @@
    (notes :type string :accessor notes :initarg :notes :initform "")
    (tags :type string :accessor tag-string :initarg :tag-string :initform "")))
 
-(defun make-link (user url title notes tags)
-  (make-instance 'link
-                 :user-id (id user)
-                 :url url :title title :notes notes
-                 :timestamp (now)
-                 :tag-string tags ;; is TAGS a list or a string ?
-                 ))
-
 (defmethod get-href ((link link))
   (format nil "/users/~a/links/~a" (username (user link)) (url link)))
 

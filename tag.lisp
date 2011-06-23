@@ -13,8 +13,8 @@
       (setf (slot-value tag 'links)
             (find-links (user tag) (list (name tag))))))
 
-(defmethod get-href ((tag string))
-  (format nil "/users/~a/tags/~a" (user tag) (name tag)))
+(defmethod get-href ((tag tag))
+  (format nil "/users/~a/tags/~a" (username (user tag)) (name tag)))
 
 (defun split-tags (tags)
   (split-sequence:split-sequence *tag-separator* tags))

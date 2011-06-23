@@ -29,9 +29,9 @@
            (<> 'timestamp (rfc3339 link))
            (<> 'title (title link))
            (<> 'notes (notes link))
-           ;; TODO
-;           (print-representation 'tags (tag-string link)
-           (<> 'tags (tag-string link)))))
+           (print-representation 'tags
+                                 (tags-from-string (user link)
+                                                   (tag-string link))))))
 
 (defmethod print-representation ((type (eql 'links)) links)
   (xml (<> 'links
@@ -40,7 +40,11 @@
                          (<> 'url (url link))
                          (<> 'timestamp (rfc3339 link))
                          (<> 'title (title link))
-                         (<> 'notes (notes link))))
+                         (<> 'notes (notes link))
+                         (print-representation
+                          'tags
+                          (tags-from-string (user link)
+                                            (tag-string link)))))
                    links))))
 
 (defmethod parse-representation ((type (eql 'link)) string)

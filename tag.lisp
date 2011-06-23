@@ -4,26 +4,28 @@
 
 (defclass tag ()
   ((name :accessor name :initarg :name)
-   (links :accessor links :initarg :links)))
+   (user :accessor user :initarg :user)
+   (links :initarg :links)))
+
+(defmethod links ((tag tag))
+  (if (slot-boundp tag 'links)
+      (slot-value tag 'links)
+      (setf (slot-value tag 'links)
+            (find-links (user tag) (list (name tag))))))
+
+(defmethod get-href ((tag string))
+  (format nil "/users/~a/tags/~a" (user tag) (name tag)))
 
 (defun split-tags (tags)
   (split-sequence:split-sequence *tag-separator* tags))
 
+(defun tags-from-string (user string)
+  (mapcar (lambda (tag)
+            (make-instance 'tag :name tag :user user))
+          (split-tags string)))
+
 ;;; Database manipulation
 #.(locally-enable-sql-reader-syntax)
-(defun find-tag (user tag)
-  (flet ((cat (&rest str)
-           (apply #'concatenate 'string str)))
-    (make-instance 'tag :name tag
-                   :links
-                   (select 'link :where [and [= [user-id] (id user)]
-                                             [or [like [tags] tag]
-                                                 [like [tags] (cat tag ",%")]
-                                                 [like [tags] (cat "%," tag)]
-                                                 [like [tags] (cat "%," tag ",%")]]]
-                           :refresh t :flatp t))))
-
-
 (defun find-links (user tags)
   (flet ((cat (&rest str)
            (apply #'concatenate 'string str)))
@@ -40,6 +42,13 @@
 #.(restore-sql-reader-syntax-state)
 
 ;;; Representations
+(defmethod print-representation ((type (eql 'tags)) tags)
+  (xml (<> 'tags
+           (<>iter (lambda (tag)
+                     (<> 'tag :href (get-href tag)
+                         (name tag)))
+                   tags))))
+
 (defmethod print-representation ((type (eql 'tag)) tag)
   (xml (<> 'tag
            (<> 'name (name tag))
@@ -55,4 +64,5 @@
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))
-    (print-representation 'links (find-links user (split-tags tags)))))
+    (print-representation 'links
+                          (links (tags-from-string user tags)))))

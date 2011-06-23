@@ -4,11 +4,6 @@
   ((username :type string :accessor username :initarg :username)
    (password :type string :accessor password :initarg :password)))
 
-(defun make-user (username password)
-  (make-instance 'user
-                 :username username
-                 :password (hash password :salt username)))
-
 (defmethod get-href ((user user))
   (format nil "/users/~a/" (username user)))
 

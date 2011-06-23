@@ -33,10 +33,16 @@ function retrieveLinks() {
             var title = $(this).find("title").text();
             var url = $(this).find("url").text();
             var notes = $(this).find("notes").text();
-            /* TODO: tags */
+            var tags = '<div class="tags">';
+            $(this).find("tag").each(function() {
+                tags += '<span class="tag">' + $(this).text() + '</span>, ';
+            });
+            tags = tags.substr(0, tags.length - 2) + '</div>';
+
             $("#links").append('<div class="link"><a href="' + url + 
-                               '">' + title + '</a><br/><p>' + notes + 
-                               '</p><div>');
+                               '">' + title + '</a><br/><p>' + notes +
+                               '</p><br/>' + tags + '<div>');
+            $("#links").append('<br/>');
         });
     }
     else {

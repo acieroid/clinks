@@ -26,9 +26,11 @@
 (defun start (&optional (port 8080) (db-specs '("clinks.db")) (db-type :sqlite3))
   (start-databases db-specs db-type)
   (push
-   (hunchentoot:create-static-file-dispatcher-and-handler "/" "../html/index.html")
+   (hunchentoot:create-static-file-dispatcher-and-handler
+    "/" "../html/index.html")
    hunchentoot:*dispatch-table*)
   (push
-   (hunchentoot:create-static-file-dispatcher-and-handler "/clinks.js" "../html/clinks.js")
+   (hunchentoot:create-static-file-dispatcher-and-handler
+    "/clinks.js" "../html/clinks.js")
    hunchentoot:*dispatch-table*)
   (hunchentoot:start (make-instance 'acceptor :port port)))

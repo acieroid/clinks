@@ -14,7 +14,7 @@
       }
       .disconnected {
       }
-      .dialog {
+      .dialog, #message {
           display: inline-block;
           background-color: #abf;
           padding: 10px;
@@ -30,6 +30,7 @@
     </style>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
     <script type="text/javascript" src="clinks.js"></script>
+    <script type="text/javascript" src="interface.js"></script>
   </head>
   <body>
     <div id="menu">
@@ -42,6 +43,9 @@
       </div>
     </div>
     <div id="dialogs">
+      <div id="message">
+      </div>
+      <br/>
       <div id="form_connect" class="dialog">
         <label for="username">Username: </label>
         <input type="text" id="username"/><br/>

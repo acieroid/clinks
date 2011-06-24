@@ -23,14 +23,19 @@
   (connect-db db-specs db-type)
   (create-tables 'user 'link))
 
+(defun hunchentoot::default-handler ()
+  (setf (content-type*) "text/xml; charset=utf-8")
+  (log-message :info "Default handler called for script ~a" (script-name*))
+  (format nil "<error>Invalid resource</error>"))
+
 (defun start (&optional (port 8080) (db-specs '("clinks.db")) (db-type :sqlite3))
   (start-databases db-specs db-type)
-  (push
-   (hunchentoot:create-static-file-dispatcher-and-handler
-    "/" "../html/index.html")
-   hunchentoot:*dispatch-table*)
-  (push
-   (hunchentoot:create-static-file-dispatcher-and-handler
-    "/clinks.js" "../html/clinks.js")
-   hunchentoot:*dispatch-table*)
+  ;; TODO: provide an alternative default-dispatcher
+  (mapcar (lambda (x)
+            (push (create-static-file-dispatcher-and-handler
+                   (first x) (second x))
+                  *dispatch-table*))
+          '(("/" "../html/index.html")
+            ("/clinks.js" "../html/clinks.js")
+            ("/interface.js" "../html/interface.js")))
   (hunchentoot:start (make-instance 'acceptor :port port)))

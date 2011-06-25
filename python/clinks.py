@@ -24,9 +24,12 @@ def to_xml(name, elements):
     res = doc.toxml()
     return res[res.find('<', 1):]
 
-def checkError(status):
-    if status == 401:
-        raise ClinksError('User already exists')
+def getText(node, name, default=""):
+    elements = node.getElementsByTagName(name)
+    if elements != []:
+        return elements[0].firstChild.toxml().rstrip().lstrip()
+    else:
+        return default
 
 def request(method, url, input=None, username=None, password=None):
     headers = {'Content-type': 'application/x-www-form-urlencoded',
@@ -36,9 +39,11 @@ def request(method, url, input=None, username=None, password=None):
     conn = httplib.HTTPConnection(server_url)
     conn.request(method, url, 'input=%s' % input, headers)
     response = conn.getresponse()
-    text = response.read()
+    xml = response.read()
+    dom = parseString(xml)
+    text = dom.firstChild.firstChild.toxml().rstrip().lstrip()
     if (response.status != 200):
-        print (text)
+        print text
     return text
 
 class User:
@@ -91,13 +96,6 @@ def new_user(username, password):
 
 def save(url, title, tags, notes):
     Link(url, title, tags, notes).create()
-
-def getText(node, name, default=""):
-    elements = node.getElementsByTagName(name)
-    if elements != []:
-        return elements[0].firstChild.toxml().rstrip().lstrip()
-    else:
-        return default
 
 def retrieve(username, tags):
     if tags:

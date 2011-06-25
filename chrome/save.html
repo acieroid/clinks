@@ -22,7 +22,9 @@ function save_link() {
                                localStorage["password"]);
     message("Sending...");
     link.onresponse = function(status, str) {
-        message(str);
+        var parser = new DOMParser();
+        var dom = parser.parseFromString(str, "text/xml");
+        message(dom.firstChild.firstChild.data);
     }
     link.create(localStorage["url"]);
 }

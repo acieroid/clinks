@@ -24,7 +24,7 @@
                     (let ((result (progn ,@body)))
                       (if (stringp result)
                           result
-                          (format nil "Action performed with success~%"))))
+                          (format nil "<success>Action performed with success</success>"))))
                 (clinks-error (e)
                   (setf (return-code*) (code e))
                   (format nil "~a~%" e))))))

@@ -36,6 +36,7 @@
     <div id="menu">
       <div class="disconnected">
         <a href="#" id="connect_popup">Connect</a>
+        <a href="#" id="create_user_popup">New user</a>
       </div>
       <div class="connected">
         <a href="#" id="save_popup">Save</a> - 
@@ -46,6 +47,17 @@
       <div id="message">
       </div>
       <br/>
+
+      <div id="form_create_user" class="dialog">
+        <label for="create_username">Username: </label>
+        <input type="text" id="create_username"/><br/>
+
+        <label for="create_password">Password: </label>
+        <input type="password" id="create_password"/><br/>
+
+        <input type="button" id="create_user" value="Connect"/>
+      </div>
+
       <div id="form_connect" class="dialog">
         <label for="username">Username: </label>
         <input type="text" id="username"/><br/>

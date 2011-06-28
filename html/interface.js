@@ -3,6 +3,7 @@ var username = "";
 var password = "";
 var connected = false;
 var timeout = false;
+var server_url = ""; /* on the same host */
 
 function message(str) {
     $("#message").show();
@@ -77,7 +78,7 @@ $(document).ready(function() {
         $(this).parent().hide();
     });
 
-    /* Connection */
+    /* Connection and user creation */
     $("#connect").click(function() {
         username = $('#username').val();
         password = $('#password').val();
@@ -86,20 +87,30 @@ $(document).ready(function() {
     $("#connect_popup").click(function() {
         $("#form_connect").show();
     });
+
     $("#disconnect").click(disconnect);
+
+    $("#create_user_popup").click(function() {
+        $("#form_create_user").show();
+    });
+    $("#create_user").click(function() {
+        var user = new Clinks.User($("#create_username").val(),
+                                   $("#create_password").val());
+        message("Creating user...");
+        user.onresponse = function(status, str) { message(str); };
+        user.create(server_url);
+    });
 
     /* Saving */
     $("#save_popup").click(function() {
         $("#form_save").show();
     });
     $("#save").click(function() {
-        link = new Clinks.Link($("#url").val(), $("#title").val(),
+        var link = new Clinks.Link($("#url").val(), $("#title").val(),
                                $("#tags").val(), $("#notes").val(),
                                username, password);
         message("Sending...");
-        link.onresponse = function(status, str) {
-            message(str);
-        }
-        link.create("");
+        link.onresponse = function(status, str) { message(str); };
+        link.create(server_url);
     });
 });

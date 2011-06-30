@@ -15,14 +15,14 @@ var Clinks = {
                                  "application/x-www-form-urlencoded");
             if (username != undefined && password != undefined) {
                 req.setRequestHeader("Authorization", "Basic " +
-                                     btoa(this.username + ":" + this.password));
+                                     btoa(username + ":" + password));
             }
-            req.send("input=" + this.representation());
+            req.send("input=" + input);
         }
         catch (error) {
-            onresponse(0, "Error when connecting to the server");
+            onresponse(0, "Error when connecting to the server (foo)");
         }
-    }
+    },
 
     User : function(username, password) {
         this.username = username;
@@ -40,10 +40,10 @@ var Clinks = {
         }
 
         this.create = function(server) {
-            request(this.onresponse, "POST", server + "/users/" + 
-                    this.username + "/links", this.representation());
+            Clinks.request(this.onresponse, "POST", server + "/users/",
+                           this.representation());
         }
-
+    },
 
     Link : function(url, title, tags, notes, username, password) {
         this.url = url;
@@ -67,7 +67,7 @@ var Clinks = {
         }
 
         this.create = function(server) {
-            request(this.onresponse, "POST", server + "/users/" +
+            Clinks.request(this.onresponse, "POST", server + "/users/" +
                     this.username + "/links", this.representation(),
                     this.username, this.password);
         }

@@ -1,6 +1,4 @@
 /* TODO: use cookies */
-var username = "";
-var password = "";
 var connected = false;
 var timeout = false;
 var server_url = ""; /* on the same host */
@@ -24,7 +22,7 @@ function message_from_response(status, str) {
 
 function connect() {
     /* TODO: check if we're really "connected" */
-    $("#span_username").text(username);
+    $("#span_username").text($.cookie("username"));
     $(".connected").show();
     $(".disconnected").hide();
     $(".dialog").hide();
@@ -42,7 +40,7 @@ function disconnect() {
 function retrieveLinks() {
     var result = $.ajax({
         type: "GET",
-        url: "/users/" + username + "/links",
+        url: "/users/" + $.cookie("username") + "/links",
         async: false,
     });
     if (result.status == 200)  {
@@ -88,8 +86,8 @@ $(document).ready(function() {
 
     /* Connection and user creation */
     $("#connect").click(function() {
-        username = $('#username').val();
-        password = $('#password').val();
+        $.cookie("username", $("#username").val());
+        $.cookie("password", $("#password").val());
         connect();
     });
     $("#connect_popup").click(function() {
@@ -115,8 +113,8 @@ $(document).ready(function() {
     });
     $("#save").click(function() {
         var link = new Clinks.Link($("#url").val(), $("#title").val(),
-                               $("#tags").val(), $("#notes").val(),
-                               username, password);
+                                   $("#tags").val(), $("#notes").val(),
+                                   $.cookie("username"), $.cookie("password"));
         message("Sending...");
         link.onresponse = message_from_response;
         link.create(server_url);

@@ -24,7 +24,7 @@ function message_from_response(status, str) {
 
 function connect() {
     /* TODO: check if we're really "connected" */
-    $(".connected").append(" - Connected as " + username);
+    $("#span_username").text(username);
     $(".connected").show();
     $(".disconnected").hide();
     $(".dialog").hide();
@@ -48,6 +48,7 @@ function retrieveLinks() {
     if (result.status == 200)  {
         var xmlDoc = $.parseXML(result.responseText);
         var xml = $(xmlDoc);
+        $("#links").text(""); /* clear the links list */
         xml.find("link").each(function() {
             var title = $(this).find("title").text();
             var url = $(this).find("url").text();
@@ -108,7 +109,7 @@ $(document).ready(function() {
         user.create(server_url);
     });
 
-    /* Saving */
+    /* Saving and updating links */
     $("#save_popup").click(function() {
         $("#form_save").show();
     });
@@ -120,4 +121,5 @@ $(document).ready(function() {
         link.onresponse = message_from_response;
         link.create(server_url);
     });
+    $("#update_links").click(retrieveLinks);
 });

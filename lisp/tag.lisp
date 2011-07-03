@@ -64,5 +64,4 @@
   (let ((user (find-user username)))
     (unless user
       (error 'user-doesnt-exists :username username))
-    (print-representation 'links
-                          (links (tags-from-string user tags)))))
+    (print-representation 'links (find-links user (split-tags tags)))))

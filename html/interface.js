@@ -15,6 +15,13 @@ function message(str) {
     timeout = setTimeout(function () { $("#message").hide(); }, 3000);
 }
 
+function message_from_response(status, str) {
+    var xmlDoc = $.parseXML(str);
+    var xml = $(xmlDoc);
+    /* only one of these two fields exists */
+    message(xml.find("error").text() + xml.find("success").text());
+}
+
 function connect() {
     /* TODO: check if we're really "connected" */
     $(".connected").append(" - Connected as " + username);
@@ -97,7 +104,7 @@ $(document).ready(function() {
         var user = new Clinks.User($("#create_username").val(),
                                    $("#create_password").val());
         message("Creating user...");
-        user.onresponse = function(status, str) { message(str); };
+        user.onresponse = message_from_response;
         user.create(server_url);
     });
 
@@ -110,7 +117,7 @@ $(document).ready(function() {
                                $("#tags").val(), $("#notes").val(),
                                username, password);
         message("Sending...");
-        link.onresponse = function(status, str) { message(str); };
+        link.onresponse = message_from_response;
         link.create(server_url);
     });
 });

@@ -31,6 +31,9 @@ function connect() {
 }
 
 function disconnect() {
+    $.cookie("username", null);
+    $.cookie("password", null);
+    $("#links").text(""); /* clear the links list */
     $(".connected").hide();
     $(".disconnected").show();
     $(".dialog").hide();
@@ -106,6 +109,11 @@ $(document).ready(function() {
         user.onresponse = message_from_response;
         user.create(server_url);
     });
+
+    /* Checking cookies */
+    if ($.cookie("username")) {
+        connect();
+    }
 
     /* Saving and updating links */
     $("#save_popup").click(function() {

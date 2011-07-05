@@ -154,6 +154,11 @@ $(document).ready(function() {
     $("#update_links").click(retrieve_links);
 
     /* Tag search */
+    $("#search_tag").keypress(function (event) {
+        if (event.which == 13) {
+            $("#new_search_tag").trigger("click");
+        }
+    });
     $("#new_search_tag").click(function() {
         add_search_tag($("#search_tag").val());
         $("#search_tag").val("");

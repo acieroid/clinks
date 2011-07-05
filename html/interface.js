@@ -1,4 +1,3 @@
-/* TODO: use cookies */
 var connected = false;
 var timeout = false;
 var server_url = ""; /* on the same host */

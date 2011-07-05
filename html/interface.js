@@ -44,6 +44,21 @@ function get_tags() {
     return $("#span_search_tags").text();
 }
 
+function delete_link(url) {
+    /* TODO: auth */
+    var result = $.ajax({
+        type: "DELETE",
+        url: "/users/" + $.cookie("username") + "/links/" + url,
+        async: false,
+    });
+    if (result.status == 204)
+        message("Deleted");
+    else
+        message("Code " + result.status + ": " + result.responseText);
+
+    retrieve_links();
+}
+
 function retrieve_links() {
     var tags = get_tags();
     var url = "/users/" + $.cookie("username");
@@ -62,18 +77,20 @@ function retrieve_links() {
         var xml = $(xmlDoc);
         $("#links").text(""); /* clear the links list */
         xml.find("link").each(function() {
-            var title = $(this).find("title").text();
-            var url = $(this).find("url").text();
-            var notes = $(this).find("notes").text();
+            var title = $.trim($(this).find("title").text());
+            var url = $.trim($(this).find("url").text());
+            var notes = $.trim($(this).find("notes").text());
             var tags = '<div class="tags">';
             $(this).find("tag").each(function() {
-                tags += '<span class="tag">' + $(this).text() + '</span> - ';
+                tags += '<span class="tag">' + $.trim($(this).text()) + '</span> - ';
             });
             tags = tags.substr(0, tags.length - 2) + '</div>';
 
             $("#links").append('<div class="link"><a href="' + url + 
-                               '">' + title + '</a><br/><p>' + notes +
-                               '</p><br/>' + tags + '<div>');
+                               '">' + title + '</a>' +
+                               '<div class="delete"><a href="#"' +
+                               'onclick="delete_link(\'' +  url + '\')">x</a></div><p>' + notes +
+                               '</p><br/>' + tags + '</div>');
             $("#links").append('<br/>');
         });
     }
@@ -147,6 +164,7 @@ $(document).ready(function() {
         var link = new Clinks.Link($("#url").val(), $("#title").val(),
                                    $("#tags").val(), $("#notes").val(),
                                    $.cookie("username"), $.cookie("password"));
+        alert(get_title($("#url").val()));
         message("Sending...");
         link.onresponse = message_from_response;
         link.create(server_url);

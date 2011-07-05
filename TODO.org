@@ -8,8 +8,6 @@ Clinks implementation
   - Import links from delicious or firefox -> simply call the
     import/export ressource
   - Fetch the page title
-  - Use cookies
-  - Search by tag
 * DONE Firefox plugin
 * DONE Chrome plugin
 * DONE CLI interface

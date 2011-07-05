@@ -27,7 +27,7 @@ function connect() {
     $(".disconnected").hide();
     $(".dialog").hide();
     connected = true;
-    retrieveLinks();
+    retrieve_links();
 }
 
 function disconnect() {
@@ -40,10 +40,21 @@ function disconnect() {
     connected = false;
 }
 
-function retrieveLinks() {
+function get_tags() {
+    return $("#span_search_tags").text();
+}
+
+function retrieve_links() {
+    var tags = get_tags();
+    var url = "/users/" + $.cookie("username");
+    if (tags == "")
+        url += "/links";
+    else
+        url += "/tags/" + tags;
+
     var result = $.ajax({
         type: "GET",
-        url: "/users/" + $.cookie("username") + "/links",
+        url: url,
         async: false,
     });
     if (result.status == 200)  {
@@ -71,6 +82,19 @@ function retrieveLinks() {
     }
 }
 
+function add_search_tag(tag) {
+    if ($("#span_search_tags").text() != "")
+        $("#span_search_tags").append(",");
+
+    $("#span_search_tags").append(tag);
+    $("#search_tag").text("");
+    retrieve_links();
+}
+
+function clear_search_tags() {
+    $("#span_search_tags").text("");
+    retrieve_links();
+}
 
 $(document).ready(function() {
     /* Initialisation */
@@ -127,5 +151,12 @@ $(document).ready(function() {
         link.onresponse = message_from_response;
         link.create(server_url);
     });
-    $("#update_links").click(retrieveLinks);
+    $("#update_links").click(retrieve_links);
+
+    /* Tag search */
+    $("#new_search_tag").click(function() {
+        add_search_tag($("#search_tag").val());
+        $("#search_tag").val("");
+    });
+    $("#clear_search_tags").click(clear_search_tags);
 });

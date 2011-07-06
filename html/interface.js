@@ -44,11 +44,15 @@ function get_tags() {
 }
 
 function delete_link(url) {
-    /* TODO: auth */
     var result = $.ajax({
         type: "DELETE",
         url: "/users/" + $.cookie("username") + "/links/" + url,
         async: false,
+        beforeSend: function(req) {
+            req.setRequestHeader("Authorization", "Basic " +
+                                 btoa($.cookie("username") + ":" + 
+                                      $.cookie("password")));
+        }
     });
     if (result.status == 204)
         message("Deleted");

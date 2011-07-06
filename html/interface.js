@@ -167,10 +167,11 @@ $(document).ready(function() {
         var link = new Clinks.Link($("#url").val(), $("#title").val(),
                                    $("#tags").val(), $("#notes").val(),
                                    $.cookie("username"), $.cookie("password"));
-        alert(get_title($("#url").val()));
         message("Sending...");
         link.onresponse = message_from_response;
         link.create(server_url);
+        $("#form_save").hide();
+        retrieve_links();
     });
     $("#update_links").click(retrieve_links);
 

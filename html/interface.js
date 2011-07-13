@@ -46,7 +46,7 @@ function get_tags() {
 function delete_link(url) {
     var result = $.ajax({
         type: "DELETE",
-        url: "/users/" + $.cookie("username") + "/links/" + url,
+        url: server_url + "/users/" + $.cookie("username") + "/links/" + url,
         async: false,
         beforeSend: function(req) {
             req.setRequestHeader("Authorization", "Basic " +
@@ -62,9 +62,39 @@ function delete_link(url) {
     retrieve_links();
 }
 
+function edit_link(url) {
+    var result = $.ajax({
+        type: "GET",
+        url: server_url + "/users/" + $.cookie("username") + "/links/" + url,
+        async: false,
+    });
+    if (result.status == 200)  {
+        var xmlDoc = $.parseXML(result.responseText);
+        var xml = $(xmlDoc);
+        var title = $.trim(xml.find("title").text());
+        var url = $.trim(xml.find("url").text());
+        var notes = $.trim(xml.find("notes").text());
+        var tags = '';
+        xml.find("tag").each(function() {
+            tags += $.trim($(this).text()) + ',';
+        });
+        tags = tags.substr(0, tags.length - 1);
+
+        $("#form_edit").show();
+        $("#edit_title").val(title);
+        $("#edit_url").val(url);
+        $("#edit_notes").val(notes);
+        $("#edit_tags").val(tags);
+    }
+    else {
+        message_from_response(result.status, result.responseText);
+    }
+
+}
+
 function retrieve_links() {
     var tags = get_tags();
-    var url = "/users/" + $.cookie("username");
+    var url = server_url + "/users/" + $.cookie("username");
     if (tags == "")
         url += "/links";
     else
@@ -91,14 +121,18 @@ function retrieve_links() {
 
             $("#links").append('<div class="link"><a href="' + url + 
                                '">' + title + '</a>' +
-                               '<div class="delete"><a href="#"' +
-                               'onclick="delete_link(\'' +  url + '\')">x</a></div><p>' + notes +
+                               '<div class="options">' + 
+                               '<a href="#"' + 'onclick="edit_link(\'' + 
+                               url + '\')">edit</a> ' +
+                               '<a href="#"' + 'onclick="delete_link(\'' + 
+                               url + '\')">delete</a>' +
+                               '</div><p>' + notes +
                                '</p><br/>' + tags + '</div>');
             $("#links").append('<br/>');
         });
     }
     else {
-        message("Code " + result.status + ": " + result.responseText);
+        message_from_response(result.status, result.responseText);
     }
 }
 
@@ -178,6 +212,16 @@ $(document).ready(function() {
         link.onresponse = message_from_response;
         link.create(server_url);
         $("#form_save").hide();
+        retrieve_links();
+    });
+    $("#edit").click(function () {
+        var link = new Clinks.Link($("#edit_url").val(), $("#edit_title").val(),
+                                   $("#edit_tags").val(), $("#edit_notes").val(),
+                                   $.cookie("username"), $.cookie("password"));
+        message("Sending...");
+        link.onresponse = message_from_response;
+        link.update(server_url);
+        $("#form_edit").hide();
         retrieve_links();
     });
     $("#update_links").click(retrieve_links);

@@ -71,5 +71,12 @@ var Clinks = {
                     this.username + "/links", this.representation(),
                     this.username, this.password);
         }
+
+        this.update = function(server) {
+            Clinks.request(this.onresponse, "POST", server + "/users/" +
+                    this.username + "/links/" + this.url, this.representation(),
+                    this.username, this.password);
+        }
+
     }
 }

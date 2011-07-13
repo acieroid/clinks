@@ -27,7 +27,8 @@
           margin: 20px;
           padding: 10px;
       }
-      .delete,.tags {
+      .options,.tags {
+          margin-left: 20px;
           float: right;
       }
     </style>
@@ -96,6 +97,21 @@
 
         <input type="button" id="save" value="Save"/>
       </div>
+
+      <div id="form_edit" class="dialog">
+        <label for="edit_url">URL: </label>
+        <input type="text" id="edit_url"/><br/>
+
+        <label for="edit_title">Title: </label>
+        <input type="text" id="edit_title"/><br/>
+
+        <label for="edit_tags">Tags: </label>
+        <input type="text" id="edit_tags"/><br/>
+
+        <label for="edit_notes">Notes: </label>
+        <textarea id="edit_notes"></textarea><br/>
+
+        <input type="button" id="edit" value="Edit"/>
     </div>
 
     <div id="links"></div>

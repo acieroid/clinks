@@ -4,7 +4,7 @@ var Clinks = {
         req.onreadystatechange = function() {
             if (req.readyState == 4) {
                 if (req.status == 0)
-                    onresponse(0, "Error when connecting to the server");
+                    onresponse(0, "<error>Error when connecting to the server</error>");
                 else
                     onresponse(req.status, req.responseText);
             }
@@ -20,7 +20,7 @@ var Clinks = {
             req.send("input=" + input);
         }
         catch (error) {
-            onresponse(0, "Error when connecting to the server (foo)");
+            onresponse(0, "<error>Error when connecting to the server</error>");
         }
     },
 

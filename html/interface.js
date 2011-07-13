@@ -155,8 +155,8 @@ $(document).ready(function() {
         user.create(server_url);
 
         /* connect */
-        $.cookie("username", $("#username").val());
-        $.cookie("password", $("#password").val());
+        $.cookie("username", $("#create_username").val());
+        $.cookie("password", $("#create_password").val());
         connect();
         $("#form_save").hide();
     });

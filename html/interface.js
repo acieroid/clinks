@@ -57,7 +57,7 @@ function delete_link(url) {
     if (result.status == 204)
         message("Deleted");
     else
-        message("Code " + result.status + ": " + result.responseText);
+        message_from_response(result.status, result.responseText);
 
     retrieve_links();
 }

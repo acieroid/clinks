@@ -9,7 +9,7 @@ function message(str) {
         clearTimeout(timeout);
         timeout = false;
     }
-    timeout = setTimeout(function () { $("#message").hide(); }, 3000);
+    timeout = setTimeout(function () { $("#message").hide(); }, 5000);
 }
 
 function message_from_response(status, str) {
@@ -147,11 +147,18 @@ $(document).ready(function() {
         $("#form_create_user").show();
     });
     $("#create_user").click(function() {
+        /* create user */
         var user = new Clinks.User($("#create_username").val(),
                                    $("#create_password").val());
-        message("Creating user...");
+        message("Creating user and connecting...");
         user.onresponse = message_from_response;
         user.create(server_url);
+
+        /* connect */
+        $.cookie("username", $("#username").val());
+        $.cookie("password", $("#password").val());
+        connect();
+        $("#form_save").hide();
     });
 
     /* Checking cookies */

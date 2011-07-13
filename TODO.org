@@ -5,9 +5,15 @@ Clinks implementation
   - Use a hash for designing links instead of their url ?
   - Import/export page
 * TODO Web interface
-  - Import links from delicious or firefox -> simply call the
-    import/export ressource
-  - Fetch the page title
-* DONE Firefox plugin
-* DONE Chrome plugin
-* DONE CLI interface
+  - Fix inscription (button should be called "New user" and disappear
+  - Edit link
+  - Unfill the content of a box when submitted
+  - Make a bookmarklet (see delicious's one)
+  - Need a good CSS
+* TODO Firefox plugin
+  - Release a packaged plugin
+  - Add a script to package a plugin, depending on the url of the server
+* TODO Chrome plugin
+  - See firefox plugin
+* TODO CLI interface
+  - Import/export

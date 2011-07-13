@@ -212,6 +212,10 @@ $(document).ready(function() {
         link.onresponse = message_from_response;
         link.create(server_url);
         $("#form_save").hide();
+        $("#title").val("");
+        $("#url").val("");
+        $("#tags").val("");
+        $("#notes").val("");
         retrieve_links();
     });
     $("#edit").click(function () {
@@ -222,6 +226,10 @@ $(document).ready(function() {
         link.onresponse = message_from_response;
         link.update(server_url);
         $("#form_edit").hide();
+        $("#edit_title").val("");
+        $("#edit_url").val("");
+        $("#edit_tags").val("");
+        $("#edit_notes").val("");
         retrieve_links();
     });
     $("#update_links").click(retrieve_links);

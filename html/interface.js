@@ -170,6 +170,8 @@ $(document).ready(function() {
         $.cookie("username", $("#username").val());
         $.cookie("password", $("#password").val());
         connect();
+        $("#username").val("");
+        $("#password").val("");
     });
     $("#connect_popup").click(function() {
         $("#form_connect").show();

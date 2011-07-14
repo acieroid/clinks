@@ -5,9 +5,6 @@ Clinks implementation
   - Use a hash for designing links instead of their url ?
   - Import/export page
 * TODO Web interface
-  - Fix inscription (button should be called "New user" and disappear
-  - Edit link
-  - Unfill the content of a box when submitted
   - Make a bookmarklet (see delicious's one)
   - Need a good CSS
 * TODO Firefox plugin

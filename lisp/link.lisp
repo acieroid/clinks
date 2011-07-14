@@ -26,7 +26,7 @@
 (defmethod print-representation ((type (eql 'link)) link)
   (xml (<> 'link
            (<> 'url (url link))
-           (<> 'timestamp (rfc3339 link))
+           (<> 'time (rfc3339 link))
            (<> 'title (title link))
            (<> 'notes (notes link))
            (print-representation 'tags
@@ -38,7 +38,7 @@
            (<>iter (lambda (link)
                      (<> 'link :href (get-href link)
                          (<> 'url (url link))
-                         (<> 'timestamp (rfc3339 link))
+                         (<> 'time (rfc3339 link))
                          (<> 'title (title link))
                          (<> 'notes (notes link))
                          (print-representation

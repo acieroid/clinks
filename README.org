@@ -2,8 +2,8 @@ clinks -- A RESTful bookmark manager
 * Introduction
 Clinks is a web app made to manage your bookmarks. It is inspired by
 [[http://delicious.com][delicious]], but it focus on providing a RESTful interface to access
-your bookmarks. Browsers plugins and CLI access are available, and a
-simple web fronted is planned.
+your bookmarks. Browsers plugins, CLI access and a simple web frontend
+are available.
 * Launching
 Once the source is downloaded and the system is ASDF-loaded (see
 [[http://common-lisp.net/project/asdf/asdf/Configuring-ASDF.html#Configuring-ASDF][the documentation]]), you just have to call =start= to launch clinks,
@@ -84,27 +84,23 @@ For example:
   <time>2011-02-27T16:57:33Z</time>
   <title>CLiki : index</title>
   <notes>The Common Lisp Wiki</notes>
-  <tags count="2">
-    <tag href="http://example.com/user/tags/lisp">
-      <name>lisp</name>
+  <tags>
+    <tag href="/user/tags/lisp">
+      lisp
     </tag>
-    <tag href="http://example.com/user/tags/cl">
-      <name>cl</name>
+    <tag href="/user/tags/cl">
+      cl
     </tag>
   </tags>
 </link>
 #+END_SRC
 
 *** Tags
-Tags just have a name, and links matching the tag:
+For the moment, tags only have a name, and their represensation is
+pretty simple:
 #+BEGIN_SRC none
 <tag>
-  <name>lisp</name>
-  <links>
-    <link href="http://example.com/user/links/7fc9683453f178773d158f69682f805456f2e7be">
-      <url>http://cliki.net</url>
-    </link>
-  </links>
+  lisp
 </tag>
 #+END_SRC
 
@@ -112,36 +108,35 @@ Tags just have a name, and links matching the tag:
 #+BEGIN_SRC none
 <user>
   <username>foo</username>
-  <password>f1d2d2f924e986ac86fdf7b36c94bcdf32beec15</password>
-  <links>
-    <link href="http://example.com/foo/links/7fc9683453f178773d158f69682f805456f2e7be">
-      <url>http://cliki.net</url>
-    </link>
-  </links>
+  <time>2011-07-14T23:17:48.000000+02:00</time>
+  <password>foobar</password>
+  <links href="/users/foo/links"/>
 </user>
 #+END_SRC
 Note that the password field won't be revealed by the server when
 accessing an user information. It only should be given as input when
 creating or modifying an user.
+
+Obviously, the =time= value can't be changed by the user and thus is
+not authorized when inputting an user representation.
 ** Operations
-Every link and tag URI should be preceded by the username, for
-example, if you want to access the tag =foo= of the user =bar=, the
-URI would be =/bar/tags/foo=.
+Every link and tag URI should be preceded by =/users/= and the
+username, for example, if you want to access the tag =foo= of the user
+=bar=, the URI would be =/users/bar/tags/foo=.
+
+If the user specified does not exists, the server will return a =401= error.
 *** Links
-Every link resource are prefixed with =/users/<username>= and will
-return =401= if the user =<username>= doesn't exists.
 **** Get the list of the links
   - /URI/: =/links=
   - /Method/: =GET=
   - /Return codes/:
     - 200 and a list of links representation if everything went fine
 **** Get informations about a link
-  - /URI/: =/links/<hash>=, where =<hash>= is in fact the =sha1sum= of
-    the link's URL
+  - /URI/: =/links/<url>=
   - /Method/: =GET=
   - /Return codes/:
     - 200 and a link representation if everything went fine
-    - 404 if there's no link corresponding to =<hash>=
+    - 404 if there's no link corresponding to =<url>=
 **** Add a link
   - /URI/: =/links=
   - /Method/: =POST=
@@ -151,7 +146,7 @@ return =401= if the user =<username>= doesn't exists.
     - 401 if the user is trying to add a link to another user's account
     - 415 if the representation isn't parsable
 **** Modify a link
-  - /URI/: =/links/<hash>=
+  - /URI/: =/links/<url>=
   - /Method/: =PUT=
   - /Input/: A link representation
   - /Return codes/:
@@ -160,7 +155,7 @@ return =401= if the user =<username>= doesn't exists.
     - 404 if the link doesn't exists
     - 415 if the representation isn't parsable
 **** Delete a link
-  - /URI/: =/links/<hash>=
+  - /URI/: =/links/<url>=
   - /Method/: =DELETE=
   - /Return codes/:
     - 204 in case of success

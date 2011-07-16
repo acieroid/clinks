@@ -1,4 +1,4 @@
-server_url = "/";
+server_url = "";
 
 function getval(id) {
     elem = document.getElementById(id);
@@ -20,7 +20,6 @@ function message_from_response(status, str) {
 }
 
 function save() {
-    alert("Saving");
     var link = new Clinks.Link(getval("clinks_url"), getval("clinks_title"),
                                getval("clinks_tags"), getval("clinks_notes"),
                                getcookie("username"), getcookie("password"));

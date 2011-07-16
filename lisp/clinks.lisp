@@ -31,6 +31,7 @@
 
 (defun start (&optional (port 8080) (db-specs '("clinks.db")) (db-type :sqlite3))
   (start-databases db-specs db-type)
+  ;(create-folder-dispatcher-and-handler "/html/" "../html/")
   (mapcar (lambda (x)
             (push (create-static-file-dispatcher-and-handler
                    (first x) (second x))
@@ -39,5 +40,6 @@
             ("/clinks.js" "../html/clinks.js")
             ("/interface.js" "../html/interface.js")
             ("/jquery.min.js" "../html/jquery.min.js")
-            ("/jquery.cookie.js" "../html/jquery.cookie.js")))
+            ("/jquery.cookie.js" "../html/jquery.cookie.js")
+            ("/bookmarklet.js" "../html/bookmarklet.js")))
   (hunchentoot:start (make-instance 'acceptor :port port)))

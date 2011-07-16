@@ -1,7 +1,9 @@
-server_url = "";
+var server_url = "";
+var div;
+var container;
 
 function getval(id) {
-    elem = document.getElementById(id);
+    var elem = document.getElementById(id);
     return elem.value;
 }
 
@@ -27,23 +29,31 @@ function save() {
     link.onresponse = message_from_response;
     link.create(server_url);
 }
-    
+
 container = document.createElement("div");
 container.style.textAlign = "center";
 div = document.createElement("div");
 div.style.display = "inline-block";
 div.style.backgroundColor = "#abf";
 div.style.padding = "10px";
+div.style.position = "absolute";
+div.style.top = "20px";
+div.style.left = "40%"
+
+function close_bookmarklet() {
+    div.style.display = "none";
+}
 
 div.innerHTML = '<div id="clinks_message"></div>' +
     '<label for="clinks_url">URL: </label>' +
-    '<input type="text" id="clinks_url"/><br/>' +
+    '<input type="text" id="clinks_url" value="' + document.location + '"/><br/>' +
     '<label for="clinks_title">Title: </label>' +
-    '<input type="text" id="clinks_title"/><br/>' +
+    '<input type="text" id="clinks_title" value="' + document.title + '"/><br/>' +
     '<label for="clinks_tags">Tags: </label>' +
     '<input type="text" id="clinks_tags"/><br/>' +
     '<textarea id="clinks_notes"></textarea><br/>' +
-    '<input type="button" id="clinks_save" value="Save" onclick="save()"/>';
+    '<input type="button" id="clinks_save" value="Save" onclick="save()"/>' +
+    ' <a href="#" onclick="close_bookmarklet()">Close</a>';
 
 container.appendChild(div);
 body = document.getElementsByTagName("body")[0];

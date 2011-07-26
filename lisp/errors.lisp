@@ -26,6 +26,15 @@
 (define-condition forbidden-characters (parse-representation-error)
   ((reason :initform "Forbidden characters")))
 
+(define-condition parse-import-error (clinks-error)
+  (code :initfrom 415)
+  (got :reader got :initarg :got)
+  (instead-of :reader instead-of :initarg :instead-of))
+
+(defmethod print-object ((e parse-import-error) stream)
+  (format stream "Error when parsing the import file: got '~a' instead of '~a'"
+          (got e) (instead-of e)))
+
 ;;; User manipulation errors
 (define-condition user-error (clinks-error)
   ((code :initform 401)

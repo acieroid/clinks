@@ -64,7 +64,7 @@
 ;;; Parent class of all data's classes
 (def-view-class data ()
   ((id :type integer :db-kind :key :db-constraints :not-null :reader id :initform nil)
-   (timestamp :type integer :accessor timestamp :initform 0)))
+   (timestamp :type integer :accessor timestamp :initform 0 :initarg :timestamp)))
 
 (defmethod initialize-instance :after ((data data) &key &allow-other-keys)
   (setf (timestamp data) (now)))

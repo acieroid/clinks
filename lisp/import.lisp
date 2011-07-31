@@ -95,8 +95,10 @@
                                         :notes notes :timestamp timestamp)))
                (setf (user-id link) (id user))
                (add-link link))))))
-  (with-input-from-string (stream (post-parameter "input"))
-    (parse-from-stream stream))
+  (if (post-parameter "input")
+      (with-input-from-string (stream (post-parameter "input"))
+        (parse-from-stream stream))
+      (error 'parse-import-error :got "an empty file" :instead-of "an xml file"))
   (setf (return-code*) 201))
 
 (defresource :GET "^/foo/?$" ()

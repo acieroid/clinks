@@ -1,9 +1,6 @@
 (in-package :clinks)
-(defparameter *create-link-fun*
-  (lambda (link &key (url "") (title "") (tags "") (notes "") (private nil)
-           (timestamp (get-universal-time)))
-    (let ((link (make-instance 'link :url url :title title :tag-string tags
-                               :notes notes :timestamp timestamp))))))
+
+(defparameter *create-link-fun* nil)
 
 (defun is-number (char)
   (and (>= (char-code char) (char-code #\0))
@@ -12,7 +9,10 @@
 (defun next-char-is (stream char)
   (let ((next-char (read-char stream)))
     (when (not (eql next-char char))
-      (error 'parse-import-error :got next-char :instead-of char))))
+      (if (or (eql next-char #\Newline)
+              (eql next-char #\Space))
+          (next-char-is stream char)
+          (error 'parse-import-error :got next-char :instead-of char)))))
 
 (defun next-string-is (stream string)
   (loop for char across string
@@ -84,3 +84,19 @@
                           :direction :input
                           :external-format :utf-8)
     (parse-from-stream stream)))
+
+(defresource-logged user :POST "/links/import/?$" ()
+  (let ((*create-link-func*
+           (lambda (&key (url "") (title "") (tags "") (notes "") (private nil)
+                    (timestamp (get-universal-time)))
+             (let ((link (make-instance 'link
+                                        :url url :title title :tag-string tags
+                                        :notes notes :timestamp timestamp)))
+               (setf (user-id link) (id user))
+               (add-link link))))))
+  (with-input-from-string (stream (post-parameter "input"))
+    (parse-from-stream stream))
+  (setf (return-code*) 201))
+
+(defresource :GET "^/foo/?$" ()
+  (setf (return-code*) 201))

@@ -1,5 +1,5 @@
 (defpackage #:clinks
   (:use :cl :clsql :hunchentoot :alexandria)
-  (:shadow :start)
+  (:shadow :start :starts-with)
   (:export :start))
 

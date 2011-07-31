@@ -15,5 +15,6 @@
                (:file "user")
                (:file "link")
                (:file "tag")
+               (:file "import")
                (:file "clinks")))
 

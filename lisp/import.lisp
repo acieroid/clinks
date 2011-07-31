@@ -35,7 +35,8 @@
     string))
 
 (defun starts-with (line str)
-  (string= (subseq line 0 (length str)) str))
+  (when (>= (length line) (length str))
+    (string= (subseq line 0 (length str)) str)))
 
 (defun skip-header (stream)
   (loop for line = (read-line stream)

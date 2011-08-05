@@ -6,13 +6,19 @@
   (and (>= (char-code char) (char-code #\0))
        (<= (char-code char) (char-code #\9))))
 
+(defun is-whitespace (char)
+  (or (eql char #\Newline)
+      (eql char #\Space)))
+
 (defun next-char-is (stream char)
   (let ((next-char (read-char stream)))
     (when (not (eql next-char char))
-      (if (or (eql next-char #\Newline)
-              (eql next-char #\Space))
+      (if (is-whitespace next-char)
           (next-char-is stream char)
-          (error 'parse-import-error :got next-char :instead-of char)))))
+          (error (format nil "foo '~a' '~a'" next-char char)))
+)))
+;(error 'parse-import-error :got next-char :instead-of char)
+
 
 (defun next-string-is (stream string)
   (loop for char across string
@@ -36,7 +42,9 @@
 
 (defun starts-with (line str)
   (when (>= (length line) (length str))
-    (string= (subseq line 0 (length str)) str)))
+    (if (is-whitespace (elt line 0))
+        (starts-with (subseq line 1) str)
+        (string= (subseq line 0 (length str)) str))))
 
 (defun skip-header (stream)
   (loop for line = (read-line stream)
@@ -50,12 +58,13 @@
     (next-string-is stream "<DT>")
     (next-string-is stream "<A HREF=")
     (let ((url (read-string stream)))
-      (next-string-is stream " ADD_DATE=")
+      ;; from here, all the fields are optional -> catch error and ignore 
+      (next-string-is stream "ADD_DATE=")
       (let ((timestamp (unix-to-universal-time
                         (parse-integer (read-string stream)))))
-        (next-string-is stream " PRIVATE=")
+        (next-string-is stream "PRIVATE=")
         (let ((private (string= (read-string stream) "1")))
-          (next-string-is stream " TAGS=")
+          (next-string-is stream "TAGS=")
           (let* ((tags (read-string stream))
                  (end (read-line stream))
                  (title (subseq end 1 (- (length end) 4)))
@@ -93,6 +102,7 @@
              (let ((link (make-instance 'link
                                         :url url :title title :tag-string tags
                                         :notes notes :timestamp timestamp)))
+               (log-message 'info "New link: ~a" url)
                (setf (user-id link) (id user))
                (add-link link))))))
   (if (post-parameter "input")

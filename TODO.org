@@ -9,7 +9,6 @@ Clinks implementation
   - Need a good CSS
 * TODO Firefox plugin
   - Release a packaged plugin
-  - Add a script to package a plugin, depending on the url of the server
 * TODO Chrome plugin
   - See firefox plugin
 * TODO CLI interface

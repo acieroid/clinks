@@ -7,19 +7,31 @@ FIREFOX_EXTENSION_DEST=clinks.xpi
 CHROME_EXTENSION_DEST=clinks.crx
 CHROME_CERT_DEST=clinks.pem
 
-function build_firefox_extension() {
-  echo "Building firefox extension ($FIREFOX_EXTENSION_DEST)"
-  cd $FIREFOX_EXTENSION_DIR
-  $ZIP clinks * >/dev/null
-  $MV clinks.zip ../$FIREFOX_EXTENSION_DEST >/dev/null
-  cd - >/dev/null
+build_firefox_extension() {
+  which zip > /dev/null
+  if [ $? -eq 1 ]
+  then
+    echo "NOT building firefox extension (zip is not installed)"
+  else
+    echo "Building firefox extension ($FIREFOX_EXTENSION_DEST)"
+    cd $FIREFOX_EXTENSION_DIR
+    $ZIP -r clinks * >/dev/null
+    $MV clinks.zip ../$FIREFOX_EXTENSION_DEST >/dev/null
+    cd - >/dev/null
+  fi
 }
 
-function build_chrome_extension() {
-  echo "Building chrome extension ($CHROME_EXTENSION_DEST and $CHROME_CERT_DEST)"
-  $CHROMIUM --pack-extension=chrome/ --no-message-box
-  mv chrome.crx $CHROME_EXTENSION_DEST
-  mv chrome.pem $CHROME_CERT_DEST
+build_chrome_extension() {
+  which chromium > /dev/null
+  if [ $? -eq 1 ]
+  then
+    echo "NOT building chrome extension (chromium is not installed)"
+  else
+    echo "Building chrome extension ($CHROME_EXTENSION_DEST and $CHROME_CERT_DEST)"
+    $CHROMIUM --pack-extension=chrome/ --no-message-box
+    $MV chrome.crx $CHROME_EXTENSION_DEST
+    $MV chrome.pem $CHROME_CERT_DEST
+  fi
 }
 
 build_firefox_extension
